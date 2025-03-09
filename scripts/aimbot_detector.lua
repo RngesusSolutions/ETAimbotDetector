@@ -2,7 +2,6 @@
 -- A Lua script for ET:Legacy servers that detects and bans players using aimbots.
 
 -- Configuration variables
-local config = {
 -- Weapon-specific thresholds
 local weaponThresholds = {
     -- Default thresholds
@@ -50,6 +49,8 @@ local weaponThresholds = {
         angleChange = 160
     }
 }
+
+local config = {
     -- Detection thresholds
     MAX_ANGLE_CHANGE = 180,           -- Maximum angle change in degrees that's considered suspicious
     ANGLE_CHANGE_THRESHOLD = 170,     -- Angle change threshold for suspicious activity (increased from 150)
