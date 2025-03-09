@@ -84,6 +84,7 @@ local config = {
     -- Logging settings
     LOG_LEVEL = 2,                    -- 0: None, 1: Minimal, 2: Detailed, 3: Debug
     LOG_FILE = "aimbot_detector.log", -- Log file name
+    LOG_DIR = "logs",                 -- Directory to store log files (will be created if it doesn't exist)
     
     -- Enable/disable specific detection methods
     DETECT_ANGLE_CHANGES = true,      -- Detect suspicious angle changes
@@ -92,7 +93,8 @@ local config = {
     DETECT_CONSECUTIVE_HITS = true,   -- Detect suspicious consecutive hits
     
     -- New options
-    DEBUG_MODE = false,               -- Enable/disable debug logging to server console
+    DEBUG_MODE = true,                -- Enable/disable debug logging to server console
+    DEBUG_LEVEL = 3,                  -- Debug level: 1=basic, 2=detailed, 3=verbose
     IGNORE_OMNIBOTS = true,           -- Skip detection for OMNIBOT players
     CHAT_WARNINGS = true,             -- Show warnings in player chat
 }
@@ -287,6 +289,16 @@ local function getAngleDifference(a1, a2)
     return diff
 end
 
+-- Ensure log directory exists
+local function ensureLogDirExists()
+    if config.LOG_DIR and config.LOG_DIR ~= "" then
+        -- Try to create the directory if it doesn't exist
+        os.execute("mkdir -p " .. config.LOG_DIR)
+        return config.LOG_DIR .. "/"
+    end
+    return ""
+end
+
 -- Log function
 local function log(level, message)
     if level <= config.LOG_LEVEL then
@@ -297,20 +309,35 @@ local function log(level, message)
         et.G_Print(logMessage)
         
         -- Write to log file
-        local file = io.open(config.LOG_FILE, "a")
+        local logDir = ensureLogDirExists()
+        local file = io.open(logDir .. config.LOG_FILE, "a")
         if file then
             file:write(logMessage)
             file:close()
+        else
+            et.G_Print("Warning: Could not open log file: " .. logDir .. config.LOG_FILE .. "\n")
         end
     end
 end
 
 -- Debug logging function (global for ET:Legacy callbacks)
-function debugLog(message)
-    if config.DEBUG_MODE then
+function debugLog(message, level)
+    level = level or 1 -- Default to level 1 if not specified
+    
+    if config.DEBUG_MODE and level <= config.DEBUG_LEVEL then
         local timestamp = os.date("%Y-%m-%d %H:%M:%S")
-        local debugMessage = string.format("[DEBUG %s] %s", timestamp, message)
+        local debugMessage = string.format("[DEBUG-%d %s] %s", level, timestamp, message)
         et.G_Print(debugMessage .. "\n")
+        
+        -- Also write to log file for persistent debugging
+        local logDir = ensureLogDirExists()
+        local file = io.open(logDir .. "aimbot_debug.log", "a")
+        if file then
+            file:write(debugMessage .. "\n")
+            file:close()
+        else
+            et.G_Print("Warning: Could not open debug log file: " .. logDir .. "aimbot_debug.log\n")
+        end
     end
 end
 
@@ -373,15 +400,27 @@ end
 
 -- Check for suspicious angle changes with pattern detection
 local function detectAngleChanges(clientNum)
-    if not config.DETECT_ANGLE_CHANGES then return false, 0 end
+    if not config.DETECT_ANGLE_CHANGES then 
+        debugLog("detectAngleChanges: Detection disabled in config", 3)
+        return false, 0 
+    end
     
     local player = players[clientNum]
-    if not player or #player.angleChanges < config.MIN_SAMPLES_REQUIRED then return false, 0 end
+    if not player then
+        debugLog("detectAngleChanges: Player not found for clientNum " .. clientNum, 3)
+        return false, 0
+    end
+    
+    if #player.angleChanges < config.MIN_SAMPLES_REQUIRED then
+        debugLog("detectAngleChanges: Insufficient angle samples for " .. player.name .. " (" .. #player.angleChanges .. "/" .. config.MIN_SAMPLES_REQUIRED .. ")", 3)
+        return false, 0
+    end
     
     -- Calculate average and standard deviation of recent angle changes
     local sum = 0
-    for _, change in ipairs(player.angleChanges) do
+    for i, change in ipairs(player.angleChanges) do
         sum = sum + change
+        debugLog("detectAngleChanges: Sample " .. i .. " = " .. change .. "°", 3)
     end
     local avg = sum / #player.angleChanges
     local stdDev = calculateStdDev(player.angleChanges, avg)
@@ -389,6 +428,8 @@ local function detectAngleChanges(clientNum)
     -- Store statistical data
     player.avgAngleChange = avg
     player.stdDevAngleChange = stdDev
+    
+    debugLog("detectAngleChanges: " .. player.name .. " - avg=" .. avg .. "°, stdDev=" .. stdDev .. "°, threshold=" .. config.ANGLE_CHANGE_THRESHOLD .. "°", 2)
     
     -- Pattern detection for aimbots
     local patternConfidence = 0
@@ -398,11 +439,13 @@ local function detectAngleChanges(clientNum)
     for i = 2, #player.angleChanges do
         if player.angleChanges[i] > 100 and player.angleChanges[i-1] < 5 then
             snapCount = snapCount + 1
+            debugLog("detectAngleChanges: Snap detected at sample " .. i .. " (" .. player.angleChanges[i] .. "° after " .. player.angleChanges[i-1] .. "°)", 3)
         end
     end
     
     if snapCount > 3 then
         patternConfidence = patternConfidence + 0.3
+        debugLog("detectAngleChanges: Multiple snaps detected (" .. snapCount .. "), adding 0.3 confidence", 2)
     end
     
     -- Check for micro-movements (humanized aimbot detection)
@@ -434,24 +477,38 @@ local function detectAngleChanges(clientNum)
     -- Check for consistent high angles (normal aimbot)
     if avg > config.ANGLE_CHANGE_THRESHOLD then
         patternConfidence = patternConfidence + 0.5
+        debugLog("detectAngleChanges: High average angle change detected, adding 0.5 confidence", 2)
         return true, patternConfidence, string.format("Suspicious angle changes (avg: %.2f°, stdDev: %.2f°)", avg, stdDev)
     end
     
     -- Check for humanized aimbot patterns (more subtle)
     if config.PATTERN_DETECTION and stdDev < 10 and avg > 100 then
         patternConfidence = patternConfidence + 0.4
+        debugLog("detectAngleChanges: Humanized aimbot pattern detected (low stdDev with high avg), adding 0.4 confidence", 2)
         return true, patternConfidence, string.format("Suspicious angle pattern detected (avg: %.2f°, stdDev: %.2f°)", avg, stdDev)
     end
     
+    debugLog("detectAngleChanges: No suspicious patterns detected for " .. player.name, 2)
     return false, patternConfidence
 end
 
 -- Check for suspicious headshot ratio
 local function detectHeadshotRatio(clientNum)
-    if not config.DETECT_HEADSHOT_RATIO then return false, 0 end
+    if not config.DETECT_HEADSHOT_RATIO then 
+        debugLog("detectHeadshotRatio: Detection disabled in config", 3)
+        return false, 0 
+    end
     
     local player = players[clientNum]
-    if not player or player.kills < config.MIN_SAMPLES_REQUIRED / 2 then return false, 0 end
+    if not player then
+        debugLog("detectHeadshotRatio: Player not found for clientNum " .. clientNum, 3)
+        return false, 0
+    end
+    
+    if player.kills < config.MIN_SAMPLES_REQUIRED / 2 then
+        debugLog("detectHeadshotRatio: Insufficient kill samples for " .. player.name .. " (" .. player.kills .. "/" .. (config.MIN_SAMPLES_REQUIRED / 2) .. ")", 3)
+        return false, 0
+    end
     
     -- Get current weapon
     local currentWeapon = player.lastWeapon or "default"
@@ -460,23 +517,38 @@ local function detectHeadshotRatio(clientNum)
     -- Calculate headshot ratio
     local ratio = player.headshots / player.kills
     
+    debugLog("detectHeadshotRatio: " .. player.name .. " - weapon=" .. currentWeapon .. ", headshots=" .. player.headshots .. ", kills=" .. player.kills .. ", ratio=" .. ratio .. ", threshold=" .. headshotThreshold, 2)
+    
     -- Confidence calculation
     local confidenceScore = 0
     
     if ratio > headshotThreshold then
         confidenceScore = (ratio - headshotThreshold) / (1 - headshotThreshold)
+        debugLog("detectHeadshotRatio: Suspicious headshot ratio detected, confidence=" .. confidenceScore, 2)
         return true, confidenceScore, string.format("Suspicious headshot ratio (%.2f)", ratio)
     end
     
+    debugLog("detectHeadshotRatio: No suspicious headshot ratio detected for " .. player.name, 3)
     return false, confidenceScore
 end
 
 -- Check for suspicious accuracy with weapon-specific thresholds
 local function detectAccuracy(clientNum)
-    if not config.DETECT_ACCURACY then return false, 0 end
+    if not config.DETECT_ACCURACY then 
+        debugLog("detectAccuracy: Detection disabled in config", 3)
+        return false, 0 
+    end
     
     local player = players[clientNum]
-    if not player or player.shots < config.MIN_SAMPLES_REQUIRED then return false, 0 end
+    if not player then
+        debugLog("detectAccuracy: Player not found for clientNum " .. clientNum, 3)
+        return false, 0
+    end
+    
+    if player.shots < config.MIN_SAMPLES_REQUIRED then
+        debugLog("detectAccuracy: Insufficient shot samples for " .. player.name .. " (" .. player.shots .. "/" .. config.MIN_SAMPLES_REQUIRED .. ")", 3)
+        return false, 0
+    end
     
     -- Get current weapon
     local currentWeapon = player.lastWeapon or "default"
@@ -491,14 +563,18 @@ local function detectAccuracy(clientNum)
         weaponAccuracy = player.weaponStats[currentWeapon].hits / player.weaponStats[currentWeapon].shots
     end
     
+    debugLog("detectAccuracy: " .. player.name .. " - weapon=" .. currentWeapon .. ", hits=" .. player.hits .. ", shots=" .. player.shots .. ", accuracy=" .. weaponAccuracy .. ", threshold=" .. accuracyThreshold, 2)
+    
     -- Confidence calculation
     local confidenceScore = 0
     
     if weaponAccuracy > accuracyThreshold then
         confidenceScore = (weaponAccuracy - accuracyThreshold) / (1 - accuracyThreshold)
+        debugLog("detectAccuracy: Suspicious accuracy detected, confidence=" .. confidenceScore, 2)
         return true, confidenceScore, string.format("Suspicious accuracy with %s (%.2f)", currentWeapon, weaponAccuracy)
     end
     
+    debugLog("detectAccuracy: No suspicious accuracy detected for " .. player.name, 3)
     return false, confidenceScore
 end
 
@@ -518,10 +594,18 @@ end
 
 -- Check for suspicious consecutive hits
 local function detectConsecutiveHits(clientNum)
-    if not config.DETECT_CONSECUTIVE_HITS then return false, 0 end
+    if not config.DETECT_CONSECUTIVE_HITS then 
+        debugLog("detectConsecutiveHits: Detection disabled in config", 3)
+        return false, 0 
+    end
     
     local player = players[clientNum]
-    if not player then return false, 0 end
+    if not player then
+        debugLog("detectConsecutiveHits: Player not found for clientNum " .. clientNum, 3)
+        return false, 0
+    end
+    
+    debugLog("detectConsecutiveHits: " .. player.name .. " - consecutiveHits=" .. player.consecutiveHits .. ", threshold=" .. config.CONSECUTIVE_HITS_THRESHOLD, 2)
     
     -- Confidence calculation
     local confidenceScore = 0
@@ -529,9 +613,11 @@ local function detectConsecutiveHits(clientNum)
     if player.consecutiveHits > config.CONSECUTIVE_HITS_THRESHOLD then
         confidenceScore = (player.consecutiveHits - config.CONSECUTIVE_HITS_THRESHOLD) / 10
         if confidenceScore > 1 then confidenceScore = 1 end
+        debugLog("detectConsecutiveHits: Suspicious consecutive hits detected, confidence=" .. confidenceScore, 2)
         return true, confidenceScore, string.format("Suspicious consecutive hits (%d)", player.consecutiveHits)
     end
     
+    debugLog("detectConsecutiveHits: No suspicious consecutive hits detected for " .. player.name, 3)
     return false, confidenceScore
 end
 
@@ -561,22 +647,32 @@ end
 -- Calculate overall aimbot confidence score
 local function calculateAimbotConfidence(clientNum)
     local player = players[clientNum]
-    if not player then return 0, 0, "Unknown", "" end
+    if not player then 
+        debugLog("calculateAimbotConfidence: Player not found for clientNum " .. clientNum, 2)
+        return 0, 0, "Unknown", "" 
+    end
     
     -- Skip if we don't have enough data
     if player.shots < config.MIN_SAMPLES_REQUIRED then
+        debugLog("calculateAimbotConfidence: Insufficient data for " .. player.name .. " (shots: " .. player.shots .. "/" .. config.MIN_SAMPLES_REQUIRED .. ")", 2)
         return 0, 0, "Insufficient data", ""
     end
+    
+    debugLog("calculateAimbotConfidence: Analyzing player " .. player.name .. " (shots: " .. player.shots .. ", hits: " .. player.hits .. ", headshots: " .. player.headshots .. ")", 2)
     
     -- Run individual detections and collect confidence scores
     local totalConfidence = 0
     local detectionCount = 0
     local reasons = {}
+    local detectionResults = {}
     
     local suspicious, confidence, reason
     
     -- Angle changes detection
     suspicious, confidence, reason = detectAngleChanges(clientNum)
+    detectionResults["angle"] = {suspicious = suspicious, confidence = confidence, reason = reason}
+    debugLog("Detection - Angle changes: " .. (suspicious and "SUSPICIOUS" or "normal") .. " (confidence: " .. confidence .. ")", 2)
+    
     if suspicious then
         totalConfidence = totalConfidence + confidence
         detectionCount = detectionCount + 1
@@ -585,6 +681,9 @@ local function calculateAimbotConfidence(clientNum)
     
     -- Headshot ratio detection
     suspicious, confidence, reason = detectHeadshotRatio(clientNum)
+    detectionResults["headshot"] = {suspicious = suspicious, confidence = confidence, reason = reason}
+    debugLog("Detection - Headshot ratio: " .. (suspicious and "SUSPICIOUS" or "normal") .. " (confidence: " .. confidence .. ")", 2)
+    
     if suspicious then
         totalConfidence = totalConfidence + confidence
         detectionCount = detectionCount + 1
@@ -593,6 +692,9 @@ local function calculateAimbotConfidence(clientNum)
     
     -- Accuracy detection
     suspicious, confidence, reason = detectAccuracy(clientNum)
+    detectionResults["accuracy"] = {suspicious = suspicious, confidence = confidence, reason = reason}
+    debugLog("Detection - Accuracy: " .. (suspicious and "SUSPICIOUS" or "normal") .. " (confidence: " .. confidence .. ")", 2)
+    
     if suspicious then
         totalConfidence = totalConfidence + confidence
         detectionCount = detectionCount + 1
@@ -601,6 +703,9 @@ local function calculateAimbotConfidence(clientNum)
     
     -- Consecutive hits detection
     suspicious, confidence, reason = detectConsecutiveHits(clientNum)
+    detectionResults["consecutive"] = {suspicious = suspicious, confidence = confidence, reason = reason}
+    debugLog("Detection - Consecutive hits: " .. (suspicious and "SUSPICIOUS" or "normal") .. " (confidence: " .. confidence .. ")", 2)
+    
     if suspicious then
         totalConfidence = totalConfidence + confidence
         detectionCount = detectionCount + 1
@@ -656,26 +761,40 @@ local function calculateAimbotConfidence(clientNum)
         end
     end
     
+    -- Detailed debug output
+    debugLog("DETECTION SUMMARY for " .. player.name .. ":", 1)
+    debugLog("  - Shots: " .. player.shots .. ", Hits: " .. player.hits .. ", Headshots: " .. player.headshots .. ", Kills: " .. player.kills, 1)
+    debugLog("  - Angle changes: avg=" .. player.avgAngleChange .. ", stdDev=" .. player.stdDevAngleChange, 1)
+    debugLog("  - Final confidence: " .. finalConfidence .. " (threshold: " .. config.CONFIDENCE_THRESHOLD .. ")", 1)
+    debugLog("  - Detection count: " .. detectionCount, 1)
+    debugLog("  - Aimbot type: " .. aimbotType, 1)
+    debugLog("  - Reasons: " .. (reasons[1] and table.concat(reasons, "; ") or "none"), 1)
+    
     return finalConfidence, detectionCount, aimbotType, table.concat(reasons, "; ")
 end
 -- Run detection with time-based intervals and confidence scoring
 local function runDetection(clientNum)
     local player = players[clientNum]
-    if not player then return end
+    if not player then 
+        debugLog("runDetection: Player not found for clientNum " .. clientNum, 2)
+        return 
+    end
     
     -- Skip detection for OMNIBOT players if enabled
     if config.IGNORE_OMNIBOTS and isOmniBot(player.guid) then
-        debugLog("Skipping detection for OMNIBOT: " .. player.name)
+        debugLog("runDetection: Skipping detection for OMNIBOT: " .. player.name, 1)
         return
     end
     
     -- Check if enough time has passed since last detection
     local currentTime = et.trap_Milliseconds()
     if (currentTime - player.lastDetectionTime) < config.DETECTION_INTERVAL then
+        debugLog("runDetection: Detection interval not reached for " .. player.name .. " (" .. (currentTime - player.lastDetectionTime) .. "/" .. config.DETECTION_INTERVAL .. "ms)", 3)
         return
     end
     
-    debugLog("Running detection for player: " .. player.name)
+    debugLog("runDetection: Running detection for player: " .. player.name, 1)
+    debugLog("runDetection: Player stats - shots: " .. player.shots .. ", hits: " .. player.hits .. ", headshots: " .. player.headshots .. ", kills: " .. player.kills, 2)
     
     -- Calculate confidence score
     local confidence, detectionCount, aimbotType, reasons = calculateAimbotConfidence(clientNum)
@@ -684,12 +803,20 @@ local function runDetection(clientNum)
     player.aimbotConfidence = confidence
     player.lastDetectionTime = currentTime
     
+    debugLog("runDetection: Detection result - confidence: " .. confidence .. ", threshold: " .. config.CONFIDENCE_THRESHOLD .. ", detectionCount: " .. detectionCount, 1)
+    
     -- Issue warning if confidence exceeds threshold
     if confidence > config.CONFIDENCE_THRESHOLD and detectionCount >= 2 then
         local warningMessage = string.format("Detected possible %s aimbot (confidence: %.2f)", 
             aimbotType, confidence)
         
+        debugLog("runDetection: WARNING TRIGGERED for " .. player.name .. " - " .. warningMessage .. " - " .. reasons, 1)
         warnPlayer(clientNum, warningMessage .. " - " .. reasons)
+    else
+        debugLog("runDetection: No warning triggered for " .. player.name .. " (confidence: " .. confidence .. ", detectionCount: " .. detectionCount .. ")", 2)
+        if confidence > 0 then
+            debugLog("runDetection: Suspicious activity detected but below threshold - " .. reasons, 2)
+        end
     end
 end
 
@@ -740,13 +867,16 @@ end
 
 -- ET:Legacy callback: WeaponFire
 function et_WeaponFire(clientNum, weapon)
-    if not players[clientNum] then return 0 end
+    if not players[clientNum] then 
+        debugLog("et_WeaponFire: Player not found for clientNum " .. clientNum, 2)
+        return 0 
+    end
     
     local player = players[clientNum]
     
     -- Skip OMNIBOT players if enabled
     if config.IGNORE_OMNIBOTS and isOmniBot(player.guid) then
-        debugLog("Skipping WeaponFire for OMNIBOT: " .. player.name)
+        debugLog("et_WeaponFire: Skipping WeaponFire for OMNIBOT: " .. player.name, 1)
         return 0
     end
     
@@ -762,6 +892,7 @@ function et_WeaponFire(clientNum, weapon)
             lastShotTime = 0,
             shotTimings = {}
         }
+        debugLog("et_WeaponFire: Initialized weapon stats for " .. player.name .. " using " .. weapon, 2)
     end
     
     -- Update shot count
@@ -792,18 +923,23 @@ function et_WeaponFire(clientNum, weapon)
     player.lastShotTime = currentTime
     player.weaponStats[weapon].lastShotTime = currentTime
     
-    debugLog("WeaponFire: " .. player.name .. " fired weapon " .. weapon)
+    debugLog("et_WeaponFire: " .. player.name .. " fired weapon " .. weapon .. " (total shots: " .. player.shots .. ")", 1)
     
     -- Get current view angles
     local angles = et.gentity_get(clientNum, "ps.viewangles")
     
     -- Check if angles are valid
-    if angles == nil then return 0 end
+    if angles == nil then 
+        debugLog("et_WeaponFire: Could not get view angles for " .. player.name, 2)
+        return 0 
+    end
     
     -- Calculate angle change
     local pitchChange = getAngleDifference(angles[0], player.lastAngle.pitch)
     local yawChange = getAngleDifference(angles[1], player.lastAngle.yaw)
     local totalChange = math.sqrt(pitchChange^2 + yawChange^2)
+    
+    debugLog("et_WeaponFire: Angle change for " .. player.name .. " - pitch: " .. pitchChange .. "°, yaw: " .. yawChange .. "°, total: " .. totalChange .. "°", 2)
     
     -- Store angle change
     if totalChange < config.MAX_ANGLE_CHANGE then
@@ -811,6 +947,9 @@ function et_WeaponFire(clientNum, weapon)
         if #player.angleChanges > 20 then
             table.remove(player.angleChanges, 1)
         end
+        debugLog("et_WeaponFire: Stored angle change for " .. player.name .. " (" .. #player.angleChanges .. " samples)", 3)
+    else
+        debugLog("et_WeaponFire: Angle change exceeds MAX_ANGLE_CHANGE, not storing", 2)
     end
     
     -- Update last angle
@@ -822,18 +961,25 @@ end
 
 -- ET:Legacy callback: Damage
 function et_Damage(targetNum, attackerNum, damage, dflags, mod)
-    if attackerNum < 0 or attackerNum >= 64 or targetNum < 0 or targetNum >= 64 then return end
-    if not players[attackerNum] then return end
+    if attackerNum < 0 or attackerNum >= 64 or targetNum < 0 or targetNum >= 64 then 
+        debugLog("et_Damage: Invalid client numbers (attacker: " .. attackerNum .. ", target: " .. targetNum .. ")", 2)
+        return 
+    end
+    
+    if not players[attackerNum] then 
+        debugLog("et_Damage: Player not found for attackerNum " .. attackerNum, 2)
+        return 
+    end
     
     local player = players[attackerNum]
     
     -- Skip OMNIBOT players if enabled
     if config.IGNORE_OMNIBOTS and isOmniBot(player.guid) then
-        debugLog("Skipping Damage for OMNIBOT: " .. player.name)
+        debugLog("et_Damage: Skipping Damage for OMNIBOT: " .. player.name, 1)
         return
     end
     
-    debugLog("Damage: " .. player.name .. " dealt " .. damage .. " damage to player " .. targetNum)
+    debugLog("et_Damage: " .. player.name .. " dealt " .. damage .. " damage to player " .. targetNum .. " with mod " .. mod, 1)
     
     -- Update hit counts
     player.hits = player.hits + 1
@@ -843,14 +989,24 @@ function et_Damage(targetNum, attackerNum, damage, dflags, mod)
     local currentWeapon = player.lastWeapon or "default"
     if player.weaponStats[currentWeapon] then
         player.weaponStats[currentWeapon].hits = player.weaponStats[currentWeapon].hits + 1
+        debugLog("et_Damage: Updated weapon stats for " .. currentWeapon .. " (hits: " .. player.weaponStats[currentWeapon].hits .. ")", 3)
+    else
+        debugLog("et_Damage: No weapon stats found for " .. currentWeapon, 2)
     end
     
     -- Check if headshot (bit 2 is DAMAGE_HEADSHOT in ET:Legacy)
-    if et.isBitSet(dflags, 2) then
-        player.headshots = player.headshots + 1
-        if player.weaponStats[currentWeapon] then
-            player.weaponStats[currentWeapon].headshots = player.weaponStats[currentWeapon].headshots + 1
+    local isHeadshot = false
+    if et.isBitSet then
+        isHeadshot = et.isBitSet(dflags, 2)
+        if isHeadshot then
+            player.headshots = player.headshots + 1
+            debugLog("et_Damage: HEADSHOT detected for " .. player.name .. " (total: " .. player.headshots .. ")", 1)
+            if player.weaponStats[currentWeapon] then
+                player.weaponStats[currentWeapon].headshots = player.weaponStats[currentWeapon].headshots + 1
+            end
         end
+    else
+        debugLog("et_Damage: et.isBitSet function not available, cannot check for headshot", 2)
     end
     
     -- Track target switching
@@ -875,41 +1031,62 @@ function et_Damage(targetNum, attackerNum, damage, dflags, mod)
     
     -- Only run detection occasionally, not on every hit
     if (currentTime - player.lastDetectionTime) > config.DETECTION_INTERVAL then
+        debugLog("et_Damage: Running detection for " .. player.name .. " after damage event", 2)
         runDetection(attackerNum)
+    else
+        debugLog("et_Damage: Skipping detection due to interval not reached", 3)
     end
 end
 
 -- ET:Legacy callback: Obituary
 function et_Obituary(targetNum, attackerNum, meansOfDeath)
-    if attackerNum < 0 or attackerNum >= 64 or targetNum < 0 or targetNum >= 64 then return end
-    if not players[attackerNum] or attackerNum == targetNum then return end
+    if attackerNum < 0 or attackerNum >= 64 or targetNum < 0 or targetNum >= 64 then 
+        debugLog("et_Obituary: Invalid client numbers (attacker: " .. attackerNum .. ", target: " .. targetNum .. ")", 2)
+        return 
+    end
+    
+    if not players[attackerNum] then 
+        debugLog("et_Obituary: Player not found for attackerNum " .. attackerNum, 2)
+        return 
+    end
+    
+    if attackerNum == targetNum then
+        debugLog("et_Obituary: Self kill detected for " .. players[attackerNum].name, 2)
+        return
+    end
     
     local player = players[attackerNum]
     
     -- Skip OMNIBOT players if enabled
     if config.IGNORE_OMNIBOTS and isOmniBot(player.guid) then
-        debugLog("Skipping Obituary for OMNIBOT: " .. player.name)
+        debugLog("et_Obituary: Skipping Obituary for OMNIBOT: " .. player.name, 1)
         return
     end
     
     player.kills = player.kills + 1
+    debugLog("et_Obituary: " .. player.name .. " killed player " .. targetNum .. " with " .. meansOfDeath .. " (total kills: " .. player.kills .. ")", 1)
     
     -- Run detection after updating stats
+    debugLog("et_Obituary: Running detection for " .. player.name .. " after kill", 2)
     runDetection(attackerNum)
 end
 
 -- ET:Legacy callback: MissedShot (custom)
 function et_MissedShot(clientNum)
-    if not players[clientNum] then return end
+    if not players[clientNum] then 
+        debugLog("et_MissedShot: Player not found for clientNum " .. clientNum, 2)
+        return 
+    end
     
     local player = players[clientNum]
     
     -- Skip OMNIBOT players if enabled
     if config.IGNORE_OMNIBOTS and isOmniBot(player.guid) then
-        debugLog("Skipping MissedShot for OMNIBOT: " .. player.name)
+        debugLog("et_MissedShot: Skipping MissedShot for OMNIBOT: " .. player.name, 1)
         return
     end
     
+    debugLog("et_MissedShot: " .. player.name .. " missed a shot, resetting consecutive hits", 2)
     player.consecutiveHits = 0
 end
 
