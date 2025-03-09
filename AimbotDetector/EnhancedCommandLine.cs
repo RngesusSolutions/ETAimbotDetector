@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AimbotDetector.AimAnalyzer;
+using AimbotDetector.DemoParser;
+using AimbotDetector.Visualization;
 using CommandLine;
 using CommandLine.Text;
 
@@ -362,7 +365,16 @@ namespace AimbotDetector
             {
                 // Analyze all players
                 float threshold = _options.Threshold >= 0 ? _options.Threshold : -1; // -1 means use default
-                return multiPlayerAnalyzer.AnalyzeAllPlayers(demoFile.Players, threshold);
+                var analyzerResults = multiPlayerAnalyzer.AnalyzeAllPlayers(demoFile.Players, threshold);
+                
+                // Convert from AimAnalyzer.AnalysisResult to AimbotDetector.AnalysisResult
+                var results = new Dictionary<string, AnalysisResult>();
+                foreach (var kvp in analyzerResults)
+                {
+                    results[kvp.Key] = new AnalysisResult(kvp.Value);
+                }
+                
+                return results;
             }
 
             return null;
@@ -560,6 +572,7 @@ namespace AimbotDetector
                         try
                         {
                             string visualizationPath = Path.Combine(outputDirectory, $"{SanitizeFilename(result.PlayerName)}_visualization.html");
+                            // Convert to the correct type for visualization
                             visualizer.GenerateVisualization(result.PlayerAimData, result.DetectionResults, visualizationPath);
                         }
                         catch (Exception ex)
@@ -576,7 +589,10 @@ namespace AimbotDetector
 
                 // Generate summary visualization
                 string summaryVisualizationPath = Path.Combine(outputDirectory, "summary_visualization.html");
-                visualizer.GenerateSummaryVisualization(results, summaryVisualizationPath);
+                
+                // Convert dictionary to the correct type for visualization
+                var visualizationResults = ConvertToVisualizationResults(results);
+                visualizer.GenerateSummaryVisualization(visualizationResults, summaryVisualizationPath);
             }
             catch (Exception ex)
             {
@@ -608,7 +624,10 @@ namespace AimbotDetector
 
                 // Generate interactive HTML report
                 var webReportGenerator = new Visualization.WebReportGenerator();
-                webReportGenerator.GenerateInteractiveReport(results, _options.InputFile, webReportDir);
+                
+                // Convert dictionary to the correct type for visualization
+                var visualizationResults = ConvertToVisualizationResults(results);
+                webReportGenerator.GenerateInteractiveReport(visualizationResults, _options.InputFile, webReportDir);
 
                 Console.WriteLine($"Web report generated at: {webReportDir}");
             }
@@ -838,6 +857,32 @@ namespace AimbotDetector
                 input = input.Replace(c, '_');
             }
             return input;
+        }
+        
+        // Helper method to convert between result types
+        private Dictionary<string, Visualization.AnalysisResult> ConvertToVisualizationResults(Dictionary<string, AnalysisResult> results)
+        {
+            var visualizationResults = new Dictionary<string, Visualization.AnalysisResult>();
+            
+            foreach (var kvp in results)
+            {
+                var result = kvp.Value;
+                var visualizationResult = new Visualization.AnalysisResult
+                {
+                    PlayerName = result.PlayerName,
+                    PlayerID = result.PlayerID,
+                    CheatingProbability = result.CheatingProbability,
+                    IsCheating = result.IsCheating,
+                    DetectionResults = result.DetectionResults,
+                    AnalyzedTimestamp = result.AnalyzedTimestamp,
+                    PlayerStatistics = result.PlayerStatistics,
+                    PlayerAimData = result.PlayerAimData
+                };
+                
+                visualizationResults[kvp.Key] = visualizationResult;
+            }
+            
+            return visualizationResults;
         }
     }
 }

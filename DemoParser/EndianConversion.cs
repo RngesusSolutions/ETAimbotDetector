@@ -12,7 +12,7 @@ namespace AimbotDetector.DemoParser
             return ((value & 0xFF) << 24) | 
                    ((value & 0xFF00) << 8) | 
                    ((value & 0xFF0000) >> 8) | 
-                   ((value & 0xFF000000) >> 24);
+                   ((int)((value & 0xFF000000) >> 24));
         }
         
         public static short LittleShort(short value)

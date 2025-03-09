@@ -152,7 +152,7 @@ namespace AimbotDetector.AimAnalyzer
             return new Vector3(pitch, yaw, 0);
         }
         
-        private float CalculateAngleDifference(Vector3 angle1, Vector3 angle2)
+        private new float CalculateAngleDifference(Vector3 angle1, Vector3 angle2)
         {
             // Calculate the difference between two view angles, accounting for angle wrapping
             float pitchDiff = MathF.Abs(NormalizeAngle(angle1.X - angle2.X));
