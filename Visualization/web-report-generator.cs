@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 
 namespace AimbotDetector.Visualization
 {
     public class WebReportGenerator
     {
         private const string TEMPLATE_DIR = "templates";
+        private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
+        {
+            WriteIndented = true
+        };
 
         public void GenerateInteractiveReport(Dictionary<string, AnalysisResult> results, string demoFile, string outputDirectory)
         {
@@ -56,7 +61,7 @@ namespace AimbotDetector.Visualization
                 }).OrderByDescending(p => p.probability)
             };
 
-            string summaryJson = Newtonsoft.Json.JsonConvert.SerializeObject(summaryData, Newtonsoft.Json.Formatting.Indented);
+            string summaryJson = JsonSerializer.Serialize(summaryData, _jsonOptions);
             File.WriteAllText(Path.Combine(dataDirectory, "summary.json"), summaryJson);
 
             // Generate player data files
@@ -84,7 +89,7 @@ namespace AimbotDetector.Visualization
                     teamAverages = result.PlayerStatistics?.TeamAverages != null ? SerializePlayerStats(result.PlayerStatistics.TeamAverages) : null
                 };
 
-                string playerJson = Newtonsoft.Json.JsonConvert.SerializeObject(playerData, Newtonsoft.Json.Formatting.Indented);
+                string playerJson = JsonSerializer.Serialize(playerData, _jsonOptions);
                 File.WriteAllText(Path.Combine(dataDirectory, $"{SanitizeFilename(result.PlayerName)}.json"), playerJson);
 
                 // Generate aim data file if available
@@ -103,13 +108,13 @@ namespace AimbotDetector.Visualization
                         angleToTarget = d.AngleToTarget
                     });
 
-                    string aimDataJson = Newtonsoft.Json.JsonConvert.SerializeObject(aimData, Newtonsoft.Json.Formatting.Indented);
+                    string aimDataJson = JsonSerializer.Serialize(aimData, _jsonOptions);
                     File.WriteAllText(Path.Combine(dataDirectory, $"{SanitizeFilename(result.PlayerName)}_aim.json"), aimDataJson);
                 }
             }
         }
 
-        private object SerializePlayerStats(PlayerStatistics stats)
+        private object SerializePlayerStats(AimbotDetector.AimAnalyzer.PlayerStatistics stats)
         {
             return new
             {

@@ -7,6 +7,34 @@
       "RelativeMoniker": "D:0:0:{ED1BC268-07A6-4CE5-B6E5-789E1A1F174C}|DemoParser\\DemoParser.csproj|solutionrelative:demoparser\\enemydata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{A1F7C0AA-0E3A-4A9F-93C4-A3F6F2DF46B4}|Visualization\\Visualization.csproj|c:\\users\\bahdg\\desktop\\etaimbotdetector\\etaimbotdetector\\visualization\\resultvisualizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1F7C0AA-0E3A-4A9F-93C4-A3F6F2DF46B4}|Visualization\\Visualization.csproj|solutionrelative:visualization\\resultvisualizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1F7C0AA-0E3A-4A9F-93C4-A3F6F2DF46B4}|Visualization\\Visualization.csproj|c:\\users\\bahdg\\desktop\\etaimbotdetector\\etaimbotdetector\\visualization\\web-report-generator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1F7C0AA-0E3A-4A9F-93C4-A3F6F2DF46B4}|Visualization\\Visualization.csproj|solutionrelative:visualization\\web-report-generator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1F7C0AA-0E3A-4A9F-93C4-A3F6F2DF46B4}|Visualization\\Visualization.csproj|c:\\users\\bahdg\\desktop\\etaimbotdetector\\etaimbotdetector\\visualization\\analysisresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1F7C0AA-0E3A-4A9F-93C4-A3F6F2DF46B4}|Visualization\\Visualization.csproj|solutionrelative:visualization\\analysisresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1F7C0AA-0E3A-4A9F-93C4-A3F6F2DF46B4}|Visualization\\Visualization.csproj|c:\\users\\bahdg\\desktop\\etaimbotdetector\\etaimbotdetector\\visualization\\visualization.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{A1F7C0AA-0E3A-4A9F-93C4-A3F6F2DF46B4}|Visualization\\Visualization.csproj|solutionrelative:visualization\\visualization.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9FC3F7E1-D49C-4723-B8C5-9C0C29FB8D7A}|AimAnalyzer\\AimAnalyzer.csproj|c:\\users\\bahdg\\desktop\\etaimbotdetector\\etaimbotdetector\\aimanalyzer\\targetprioritydetection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9FC3F7E1-D49C-4723-B8C5-9C0C29FB8D7A}|AimAnalyzer\\AimAnalyzer.csproj|solutionrelative:aimanalyzer\\targetprioritydetection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9FC3F7E1-D49C-4723-B8C5-9C0C29FB8D7A}|AimAnalyzer\\AimAnalyzer.csproj|c:\\users\\bahdg\\desktop\\etaimbotdetector\\etaimbotdetector\\aimanalyzer\\playerstatistics.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9FC3F7E1-D49C-4723-B8C5-9C0C29FB8D7A}|AimAnalyzer\\AimAnalyzer.csproj|solutionrelative:aimanalyzer\\playerstatistics.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9FC3F7E1-D49C-4723-B8C5-9C0C29FB8D7A}|AimAnalyzer\\AimAnalyzer.csproj|c:\\users\\bahdg\\desktop\\etaimbotdetector\\etaimbotdetector\\aimanalyzer\\aimanalyzer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9FC3F7E1-D49C-4723-B8C5-9C0C29FB8D7A}|AimAnalyzer\\AimAnalyzer.csproj|solutionrelative:aimanalyzer\\aimanalyzer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A7583E2D-F0CB-439E-9A80-C14A55C161C9}|AimbotDetector.Tests\\AimbotDetector.Tests.csproj|c:\\users\\bahdg\\desktop\\etaimbotdetector\\etaimbotdetector\\aimbotdetector.tests\\integrationtests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A7583E2D-F0CB-439E-9A80-C14A55C161C9}|AimbotDetector.Tests\\AimbotDetector.Tests.csproj|solutionrelative:aimbotdetector.tests\\integrationtests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -27,20 +55,8 @@
       "RelativeMoniker": "D:0:0:{7A8BD6C5-9A6D-4B89-B9FF-25D2E3F0AEA0}|AimbotDetector\\AimbotDetector.csproj|solutionrelative:aimbotdetector\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A1F7C0AA-0E3A-4A9F-93C4-A3F6F2DF46B4}|Visualization\\Visualization.csproj|c:\\users\\bahdg\\desktop\\etaimbotdetector\\etaimbotdetector\\visualization\\resultvisualizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A1F7C0AA-0E3A-4A9F-93C4-A3F6F2DF46B4}|Visualization\\Visualization.csproj|solutionrelative:visualization\\resultvisualizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{ED1BC268-07A6-4CE5-B6E5-789E1A1F174C}|DemoParser\\DemoParser.csproj|c:\\users\\bahdg\\desktop\\etaimbotdetector\\etaimbotdetector\\demoparser\\demofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{ED1BC268-07A6-4CE5-B6E5-789E1A1F174C}|DemoParser\\DemoParser.csproj|solutionrelative:demoparser\\demofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{9FC3F7E1-D49C-4723-B8C5-9C0C29FB8D7A}|AimAnalyzer\\AimAnalyzer.csproj|c:\\users\\bahdg\\desktop\\etaimbotdetector\\etaimbotdetector\\aimanalyzer\\targetprioritydetection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9FC3F7E1-D49C-4723-B8C5-9C0C29FB8D7A}|AimAnalyzer\\AimAnalyzer.csproj|solutionrelative:aimanalyzer\\targetprioritydetection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A1F7C0AA-0E3A-4A9F-93C4-A3F6F2DF46B4}|Visualization\\Visualization.csproj|c:\\users\\bahdg\\desktop\\etaimbotdetector\\etaimbotdetector\\visualization\\web-report-generator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A1F7C0AA-0E3A-4A9F-93C4-A3F6F2DF46B4}|Visualization\\Visualization.csproj|solutionrelative:visualization\\web-report-generator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{ED1BC268-07A6-4CE5-B6E5-789E1A1F174C}|DemoParser\\DemoParser.csproj|c:\\users\\bahdg\\desktop\\etaimbotdetector\\etaimbotdetector\\demoparser\\demoparser.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
@@ -62,24 +78,73 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "AimbotDetector.Tests",
-              "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector.Tests\\AimbotDetector.Tests.csproj",
-              "RelativeDocumentMoniker": "AimbotDetector.Tests\\AimbotDetector.Tests.csproj",
-              "ToolTip": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector.Tests\\AimbotDetector.Tests.csproj",
-              "RelativeToolTip": "AimbotDetector.Tests\\AimbotDetector.Tests.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 4,
+              "Title": "Visualization.csproj",
+              "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\Visualization.csproj",
+              "RelativeDocumentMoniker": "Visualization\\Visualization.csproj",
+              "ToolTip": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\Visualization.csproj",
+              "RelativeToolTip": "Visualization\\Visualization.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-03-09T02:10:47.48Z",
+              "WhenOpened": "2025-03-09T02:35:47.362Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 6,
+              "Title": "PlayerStatistics.cs",
+              "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimAnalyzer\\PlayerStatistics.cs",
+              "RelativeDocumentMoniker": "AimAnalyzer\\PlayerStatistics.cs",
+              "ToolTip": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimAnalyzer\\PlayerStatistics.cs",
+              "RelativeToolTip": "AimAnalyzer\\PlayerStatistics.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-09T02:31:50.024Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AimAnalyzer.cs",
+              "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimAnalyzer\\AimAnalyzer.cs",
+              "RelativeDocumentMoniker": "AimAnalyzer\\AimAnalyzer.cs",
+              "ToolTip": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimAnalyzer\\AimAnalyzer.cs",
+              "RelativeToolTip": "AimAnalyzer\\AimAnalyzer.cs",
+              "ViewState": "AgIAAHcDAAAAAAAAAAAAwIkDAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-09T02:27:03.463Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "TargetPriorityDetection.cs",
+              "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimAnalyzer\\TargetPriorityDetection.cs",
+              "RelativeDocumentMoniker": "AimAnalyzer\\TargetPriorityDetection.cs",
+              "ToolTip": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimAnalyzer\\TargetPriorityDetection.cs",
+              "RelativeToolTip": "AimAnalyzer\\TargetPriorityDetection.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-09T01:44:36.43Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "web-report-generator.cs",
+              "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\web-report-generator.cs",
+              "RelativeDocumentMoniker": "Visualization\\web-report-generator.cs",
+              "ToolTip": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\web-report-generator.cs",
+              "RelativeToolTip": "Visualization\\web-report-generator.cs",
+              "ViewState": "AgIAAPsDAAAAAAAAAAAUwAkEAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-09T01:53:23.505Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "IntegrationTests.cs",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector.Tests\\IntegrationTests.cs",
               "RelativeDocumentMoniker": "AimbotDetector.Tests\\IntegrationTests.cs",
@@ -87,7 +152,19 @@
               "RelativeToolTip": "AimbotDetector.Tests\\IntegrationTests.cs",
               "ViewState": "AgIAAGcBAAAAAAAAAAAUwH0BAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-09T02:11:10.099Z",
+              "WhenOpened": "2025-03-09T02:11:10.099Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "AimbotDetector.Tests.csproj",
+              "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector.Tests\\AimbotDetector.Tests.csproj",
+              "RelativeDocumentMoniker": "AimbotDetector.Tests\\AimbotDetector.Tests.csproj",
+              "ToolTip": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector.Tests\\AimbotDetector.Tests.csproj",
+              "RelativeToolTip": "AimbotDetector.Tests\\AimbotDetector.Tests.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-03-09T02:10:47.48Z",
               "EditorCaption": ""
             },
             {
@@ -105,7 +182,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 10,
               "Title": "UnitTest1.cs",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector.Tests\\UnitTest1.cs",
               "RelativeDocumentMoniker": "AimbotDetector.Tests\\UnitTest1.cs",
@@ -113,12 +190,36 @@
               "RelativeToolTip": "AimbotDetector.Tests\\UnitTest1.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-09T02:09:05.122Z",
+              "WhenOpened": "2025-03-09T02:09:05.122Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ResultVisualizer.cs",
+              "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\ResultVisualizer.cs",
+              "RelativeDocumentMoniker": "Visualization\\ResultVisualizer.cs",
+              "ToolTip": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\ResultVisualizer.cs",
+              "RelativeToolTip": "Visualization\\ResultVisualizer.cs",
+              "ViewState": "AgIAAF8CAAAAAAAAAAAwwG8CAABDAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-09T01:58:13.932Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
+              "Title": "AnalysisResult.cs",
+              "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\AnalysisResult.cs",
+              "RelativeDocumentMoniker": "Visualization\\AnalysisResult.cs",
+              "ToolTip": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\AnalysisResult.cs",
+              "RelativeToolTip": "Visualization\\AnalysisResult.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-09T02:42:30.404Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
               "Title": "EnhancedCommandLine.cs",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector\\EnhancedCommandLine.cs",
               "RelativeDocumentMoniker": "AimbotDetector\\EnhancedCommandLine.cs",
@@ -126,12 +227,11 @@
               "RelativeToolTip": "AimbotDetector\\EnhancedCommandLine.cs",
               "ViewState": "AgIAANECAAAAAAAAAAAUwO8CAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-09T02:04:41.827Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-09T02:04:41.827Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 12,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector\\Program.cs",
               "RelativeDocumentMoniker": "AimbotDetector\\Program.cs",
@@ -139,39 +239,12 @@
               "RelativeToolTip": "AimbotDetector\\Program.cs",
               "ViewState": "AgIAAFIAAAAAAAAAAAAUwHUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-09T02:02:23.886Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-09T02:02:23.886Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "ResultVisualizer.cs",
-              "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\ResultVisualizer.cs",
-              "RelativeDocumentMoniker": "Visualization\\ResultVisualizer.cs",
-              "ToolTip": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\ResultVisualizer.cs",
-              "RelativeToolTip": "Visualization\\ResultVisualizer.cs",
-              "ViewState": "AgIAAPQCAAAAAAAAAAAUwBQDAAA5AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-09T01:58:13.932Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "web-report-generator.cs",
-              "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\web-report-generator.cs",
-              "RelativeDocumentMoniker": "Visualization\\web-report-generator.cs",
-              "ToolTip": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\web-report-generator.cs",
-              "RelativeToolTip": "Visualization\\web-report-generator.cs",
-              "ViewState": "AgIAAPYDAAAAAAAAAAAUwCkEAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-09T01:53:23.505Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "DemoParser",
+              "DocumentIndex": 14,
+              "Title": "DemoParser.csproj",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\DemoParser\\DemoParser.csproj",
               "RelativeDocumentMoniker": "DemoParser\\DemoParser.csproj",
               "ToolTip": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\DemoParser\\DemoParser.csproj",
@@ -183,20 +256,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "TargetPriorityDetection.cs",
-              "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimAnalyzer\\TargetPriorityDetection.cs",
-              "RelativeDocumentMoniker": "AimAnalyzer\\TargetPriorityDetection.cs",
-              "ToolTip": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimAnalyzer\\TargetPriorityDetection.cs",
-              "RelativeToolTip": "AimAnalyzer\\TargetPriorityDetection.cs",
-              "ViewState": "AgIAAPMAAAAAAAAAAADwvyUBAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-09T01:44:36.43Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 13,
               "Title": "DemoFile.cs",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\DemoParser\\DemoFile.cs",
               "RelativeDocumentMoniker": "DemoParser\\DemoFile.cs",
@@ -204,12 +264,11 @@
               "RelativeToolTip": "DemoParser\\DemoFile.cs",
               "ViewState": "AgIAAAwDAAAAAAAAAAAywD8DAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-09T01:23:26.363Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-09T01:23:26.363Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 15,
               "Title": "TimestampedPosition.cs",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\DemoParser\\TimestampedPosition.cs",
               "RelativeDocumentMoniker": "DemoParser\\TimestampedPosition.cs",
@@ -217,12 +276,11 @@
               "RelativeToolTip": "DemoParser\\TimestampedPosition.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-09T01:50:36.186Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-09T01:50:36.186Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 16,
               "Title": "PlayerPositionHistory.cs",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\DemoParser\\PlayerPositionHistory.cs",
               "RelativeDocumentMoniker": "DemoParser\\PlayerPositionHistory.cs",
@@ -230,8 +288,7 @@
               "RelativeToolTip": "DemoParser\\PlayerPositionHistory.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-09T01:50:04.124Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-09T01:50:04.124Z"
             },
             {
               "$type": "Bookmark",

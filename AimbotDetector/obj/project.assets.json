@@ -50,20 +50,6 @@
         "runtime": {
           "bin/placeholder/DemoParser.dll": {}
         }
-      },
-      "Visualization/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v6.0",
-        "dependencies": {
-          "AimAnalyzer": "1.0.0",
-          "DemoParser": "1.0.0"
-        },
-        "compile": {
-          "bin/placeholder/Visualization.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/Visualization.dll": {}
-        }
       }
     }
   },
@@ -129,11 +115,6 @@
       "type": "project",
       "path": "../DemoParser/DemoParser.csproj",
       "msbuildProject": "../DemoParser/DemoParser.csproj"
-    },
-    "Visualization/1.0.0": {
-      "type": "project",
-      "path": "../Visualization/Visualization.csproj",
-      "msbuildProject": "../Visualization/Visualization.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -141,8 +122,7 @@
       "AimAnalyzer >= 1.0.0",
       "CommandLineParser >= 2.9.1",
       "DemoParser >= 1.0.0",
-      "Newtonsoft.Json >= 13.0.3",
-      "Visualization >= 1.0.0"
+      "Newtonsoft.Json >= 13.0.3"
     ]
   },
   "packageFolders": {
@@ -182,9 +162,6 @@
             },
             "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\DemoParser\\DemoParser.csproj": {
               "projectPath": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\DemoParser\\DemoParser.csproj"
-            },
-            "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\Visualization.csproj": {
-              "projectPath": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\Visualization.csproj"
             }
           }
         }
