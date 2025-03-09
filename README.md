@@ -38,7 +38,3 @@ The system employs the following detection methods:
 - Visual Studio 2022
 - .NET 6.0 SDK or later
 - Knowledge of Enemy Territory demo formats
-
-### Building the Solution
-
-1. Clone the repository:
