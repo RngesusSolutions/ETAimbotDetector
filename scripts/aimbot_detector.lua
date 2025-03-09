@@ -53,17 +53,25 @@ local weaponThresholds = {
 local config = {
     -- Detection thresholds
     MAX_ANGLE_CHANGE = 180,           -- Maximum angle change in degrees that's considered suspicious
-    ANGLE_CHANGE_THRESHOLD = 170,     -- Angle change threshold for suspicious activity (increased from 150)
-    HEADSHOT_RATIO_THRESHOLD = 0.8,   -- Ratio of headshots to total kills that's considered suspicious (increased from 0.7)
-    ACCURACY_THRESHOLD = 0.9,         -- Accuracy threshold that's considered suspicious (increased from 0.8)
-    CONSECUTIVE_HITS_THRESHOLD = 15,  -- Number of consecutive hits that's considered suspicious (increased from 10)
+    ANGLE_CHANGE_THRESHOLD = 120,     -- Angle change threshold for suspicious activity (decreased from 170)
+    HEADSHOT_RATIO_THRESHOLD = 0.6,   -- Ratio of headshots to total kills that's considered suspicious (decreased from 0.8)
+    ACCURACY_THRESHOLD = 0.7,         -- Accuracy threshold that's considered suspicious (decreased from 0.9)
+    CONSECUTIVE_HITS_THRESHOLD = 10,  -- Number of consecutive hits that's considered suspicious (decreased from 15)
     
     -- Advanced detection settings
-    DETECTION_INTERVAL = 5000,        -- Minimum time between detections in milliseconds
+    DETECTION_INTERVAL = 3000,        -- Minimum time between detections in milliseconds (decreased from 5000)
     PATTERN_DETECTION = true,         -- Enable pattern-based detection
     STATISTICAL_ANALYSIS = true,      -- Enable statistical analysis
-    MIN_SAMPLES_REQUIRED = 20,        -- Minimum number of samples required for statistical analysis
-    CONFIDENCE_THRESHOLD = 0.8,       -- Confidence threshold for aimbot detection
+    TIME_SERIES_ANALYSIS = true,      -- Enable time-series analysis
+    MICRO_MOVEMENT_DETECTION = true,  -- Enable micro-movement detection for humanized aimbots
+    MIN_SAMPLES_REQUIRED = 15,        -- Minimum number of samples required for statistical analysis (decreased from 20)
+    CONFIDENCE_THRESHOLD = 0.6,       -- Confidence threshold for aimbot detection (decreased from 0.8)
+    
+    -- Time-series analysis settings
+    TIME_SERIES_THRESHOLD = 0.6,      -- Threshold for time-series analysis confidence
+    MIN_SHOT_SAMPLES = 5,             -- Minimum number of shot timing samples required
+    TIMING_CONSISTENCY_WEIGHT = 0.6,  -- Weight for timing consistency in time-series analysis
+    PATTERN_DETECTION_WEIGHT = 0.4,   -- Weight for pattern detection in time-series analysis
     
     -- Weapon-specific settings
     WEAPON_SPECIFIC_THRESHOLDS = true, -- Enable weapon-specific thresholds
@@ -128,6 +136,12 @@ local function initPlayerData(clientNum)
         lastDetectionTime = 0,
         lastShotTime = 0,
         reactionTimes = {},
+        shotTimings = {},
+        
+        -- Target tracking
+        lastTarget = -1,
+        lastTargetTime = 0,
+        targetSwitches = {},
         
         -- Statistical data
         avgAngleChange = 0,
@@ -170,6 +184,82 @@ local function calculateMovingAverage(values, window)
     end
     
     return sum / window
+end
+
+-- Calculate timing consistency between shots
+local function calculateTimingConsistency(player)
+    if not player.weaponStats[player.lastWeapon] then return 0 end
+    if not player.shotTimings or #player.shotTimings < 5 then return 0 end
+    
+    local timings = player.shotTimings
+    local avg = calculateMovingAverage(timings, #timings)
+    local stdDev = calculateStdDev(timings, avg)
+    
+    -- Normalize standard deviation as a percentage of the average
+    local normalizedStdDev = stdDev / avg
+    
+    -- Return consistency score (1 - normalized standard deviation)
+    -- Higher score means more consistent timing (suspicious)
+    return math.max(0, math.min(1, 1 - normalizedStdDev))
+end
+
+-- Detect repeating patterns in a sequence
+local function detectRepeatingPatterns(sequence)
+    if #sequence < 10 then return 0 end
+    
+    local patternCount = 0
+    -- Check for patterns of length 2-4
+    for patternLength = 2, 4 do
+        for i = 1, #sequence - (patternLength * 2) + 1 do
+            local pattern = {}
+            for j = 0, patternLength - 1 do
+                pattern[j+1] = sequence[i+j]
+            end
+            
+            -- Check if this pattern repeats
+            local repeats = 0
+            for k = i + patternLength, #sequence - patternLength + 1, patternLength do
+                local matches = true
+                for j = 1, patternLength do
+                    if math.abs(sequence[k+j-1] - pattern[j]) > 5 then
+                        matches = false
+                        break
+                    end
+                end
+                if matches then repeats = repeats + 1 end
+            end
+            
+            if repeats > 1 then patternCount = patternCount + 1 end
+        end
+    end
+    
+    -- Return normalized pattern score (0-1)
+    return math.min(1, patternCount / 5)
+end
+
+-- Analyze time-series data for aimbot patterns
+local function analyzeTimeSeriesData(clientNum)
+    local player = players[clientNum]
+    if not player then return 0, "No data" end
+    
+    -- Skip if we don't have enough data
+    if #player.angleChanges < 10 or not player.shotTimings or #player.shotTimings < 5 then
+        return 0, "Insufficient data"
+    end
+    
+    -- Calculate timing consistency
+    local timingConsistency = calculateTimingConsistency(player)
+    
+    -- Detect repeating patterns in angle changes
+    local patternScore = detectRepeatingPatterns(player.angleChanges)
+    
+    -- Calculate combined time-series score
+    local timeSeriesScore = (timingConsistency * 0.6) + (patternScore * 0.4)
+    
+    local reason = string.format("Time-series analysis (timing: %.2f, patterns: %.2f)", 
+        timingConsistency, patternScore)
+    
+    return timeSeriesScore, reason
 end
 
 -- Get weapon-specific threshold
@@ -315,6 +405,32 @@ local function detectAngleChanges(clientNum)
         patternConfidence = patternConfidence + 0.3
     end
     
+    -- Check for micro-movements (humanized aimbot detection)
+    local microMovementCount = 0
+    local microMovementSequence = 0
+    local maxMicroMovementSequence = 0
+    
+    for i = 2, #player.angleChanges do
+        -- Micro-movements are small, precise adjustments between 5-20 degrees
+        if player.angleChanges[i] >= 5 and player.angleChanges[i] <= 20 then
+            microMovementCount = microMovementCount + 1
+            microMovementSequence = microMovementSequence + 1
+            
+            if microMovementSequence > maxMicroMovementSequence then
+                maxMicroMovementSequence = microMovementSequence
+            end
+        else
+            microMovementSequence = 0
+        end
+    end
+    
+    -- Detect humanized aimbot patterns based on micro-movements
+    if microMovementCount >= 5 and maxMicroMovementSequence >= 3 and stdDev < 15 then
+        patternConfidence = patternConfidence + 0.45
+        return true, patternConfidence, string.format("Suspicious micro-movement pattern detected (count: %d, sequence: %d, stdDev: %.2f°)", 
+            microMovementCount, maxMicroMovementSequence, stdDev)
+    end
+    
     -- Check for consistent high angles (normal aimbot)
     if avg > config.ANGLE_CHANGE_THRESHOLD then
         patternConfidence = patternConfidence + 0.5
@@ -419,6 +535,29 @@ local function detectConsecutiveHits(clientNum)
     return false, confidenceScore
 end
 
+-- Detect rapid target switching
+local function detectTargetSwitching(clientNum)
+    local player = players[clientNum]
+    if not player or #player.targetSwitches < 5 then return false, 0 end
+    
+    local rapidSwitchCount = 0
+    for _, switchTime in ipairs(player.targetSwitches) do
+        if switchTime < 300 then -- Less than 300ms between target switches
+            rapidSwitchCount = rapidSwitchCount + 1
+        end
+    end
+    
+    local switchRatio = rapidSwitchCount / #player.targetSwitches
+    debugLog("Target switching: " .. player.name .. " - rapid=" .. rapidSwitchCount .. ", total=" .. #player.targetSwitches .. ", ratio=" .. switchRatio)
+    
+    if switchRatio > 0.6 and #player.targetSwitches > 5 then
+        local confidence = switchRatio - 0.6
+        return true, confidence, string.format("Suspicious rapid target switching (%.2f of switches < 300ms)", switchRatio)
+    end
+    
+    return false, 0
+end
+
 -- Calculate overall aimbot confidence score
 local function calculateAimbotConfidence(clientNum)
     local player = players[clientNum]
@@ -468,6 +607,31 @@ local function calculateAimbotConfidence(clientNum)
         table.insert(reasons, reason)
     end
     
+    -- Target switching detection (new)
+    if config.MICRO_MOVEMENT_DETECTION and player.targetSwitches and #player.targetSwitches >= 5 then
+        suspicious, confidence, reason = detectTargetSwitching(clientNum)
+        if suspicious then
+            totalConfidence = totalConfidence + confidence * 1.2 -- Weight target switching higher
+            detectionCount = detectionCount + 1
+            table.insert(reasons, reason)
+            
+            debugLog("Target switching detection found suspicious pattern: " .. reason)
+        end
+    end
+    
+    -- Time-series analysis (new)
+    if config.TIME_SERIES_ANALYSIS and player.shotTimings and #player.shotTimings >= config.MIN_SHOT_SAMPLES then
+        local timeSeriesScore, timeSeriesReason = analyzeTimeSeriesData(clientNum)
+        
+        if timeSeriesScore > config.TIME_SERIES_THRESHOLD then
+            totalConfidence = totalConfidence + timeSeriesScore
+            detectionCount = detectionCount + 1
+            table.insert(reasons, timeSeriesReason)
+            
+            debugLog("Time-series analysis detected suspicious pattern: " .. timeSeriesReason)
+        end
+    end
+    
     -- Calculate final confidence score
     local finalConfidence = 0
     if detectionCount > 0 then
@@ -477,8 +641,16 @@ local function calculateAimbotConfidence(clientNum)
     -- Determine aimbot type based on patterns
     local aimbotType = "Unknown"
     if finalConfidence > config.CONFIDENCE_THRESHOLD then
+        -- Determine aimbot type based on multiple factors
         if player.stdDevAngleChange < 15 and player.avgAngleChange > 100 then
             aimbotType = "Humanized"
+        elseif player.shotTimings and #player.shotTimings >= 5 then
+            local timingConsistency = calculateTimingConsistency(player)
+            if timingConsistency > 0.8 then
+                aimbotType = "Humanized"
+            else
+                aimbotType = "Normal"
+            end
         else
             aimbotType = "Normal"
         end
@@ -587,7 +759,8 @@ function et_WeaponFire(clientNum, weapon)
             shots = 0,
             hits = 0,
             headshots = 0,
-            lastShotTime = 0
+            lastShotTime = 0,
+            shotTimings = {}
         }
     end
     
@@ -598,6 +771,24 @@ function et_WeaponFire(clientNum, weapon)
     -- Track shot timing
     local currentTime = et.trap_Milliseconds()
     local timeSinceLastShot = currentTime - player.lastShotTime
+    
+    -- Store shot timing data if it's a valid interval (not first shot and not too long between shots)
+    if player.lastShotTime > 0 and timeSinceLastShot < 2000 then
+        -- Store in weapon-specific timings
+        table.insert(player.weaponStats[weapon].shotTimings, timeSinceLastShot)
+        if #player.weaponStats[weapon].shotTimings > 20 then
+            table.remove(player.weaponStats[weapon].shotTimings, 1)
+        end
+        
+        -- Store in player's overall timings
+        table.insert(player.shotTimings, timeSinceLastShot)
+        if #player.shotTimings > 20 then
+            table.remove(player.shotTimings, 1)
+        end
+        
+        debugLog("Shot timing: " .. timeSinceLastShot .. "ms with " .. weapon)
+    end
+    
     player.lastShotTime = currentTime
     player.weaponStats[weapon].lastShotTime = currentTime
     
@@ -662,8 +853,27 @@ function et_Damage(targetNum, attackerNum, damage, dflags, mod)
         end
     end
     
-    -- Only run detection occasionally, not on every hit
+    -- Track target switching
     local currentTime = et.trap_Milliseconds()
+    if player.lastTarget ~= targetNum and player.lastTarget ~= -1 then
+        local switchTime = currentTime - player.lastTargetTime
+        
+        -- Only track valid switches (not too long between targets)
+        if switchTime < 2000 then
+            table.insert(player.targetSwitches, switchTime)
+            if #player.targetSwitches > 20 then
+                table.remove(player.targetSwitches, 1)
+            end
+            
+            debugLog("Target switch: " .. player.name .. " switched from " .. player.lastTarget .. " to " .. targetNum .. " in " .. switchTime .. "ms")
+        end
+    end
+    
+    -- Update last target info
+    player.lastTarget = targetNum
+    player.lastTargetTime = currentTime
+    
+    -- Only run detection occasionally, not on every hit
     if (currentTime - player.lastDetectionTime) > config.DETECTION_INTERVAL then
         runDetection(attackerNum)
     end
