@@ -119,7 +119,7 @@ local function warnPlayer(clientNum, reason)
         reason, player.warnings, config.WARNINGS_BEFORE_BAN)
     
     -- Send message to player
-    et.trap_SendServerCommand(clientNum, "cp \"" .. warningMessage .. "\"")
+    et.trap_SendServerCommand(clientNum, "cp " .. warningMessage)
     
     -- Log warning
     log(1, string.format("Warning issued to %s (%s): %s", 
