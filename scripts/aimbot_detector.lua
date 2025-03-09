@@ -291,8 +291,16 @@ function et_ClientConnect(clientNum, firstTime, isBot)
     if isBot == 1 then return end
     
     initPlayerData(clientNum)
-    log(2, string.format("Player connected: %s (%s)", 
-        players[clientNum].name, players[clientNum].guid))
+    
+    -- Log if player is an OMNIBOT
+    if config.IGNORE_OMNIBOTS and isOmniBot(players[clientNum].guid) then
+        log(1, string.format("OMNIBOT detected and will be ignored: %s (%s)", 
+            players[clientNum].name, players[clientNum].guid))
+        debug("OMNIBOT detected: " .. players[clientNum].name)
+    else
+        log(2, string.format("Player connected: %s (%s)", 
+            players[clientNum].name, players[clientNum].guid))
+    end
 end
 
 -- ET:Legacy callback: ClientDisconnect
@@ -319,6 +327,13 @@ function et_WeaponFire(clientNum, weapon)
     if not players[clientNum] then return 0 end
     
     local player = players[clientNum]
+    
+    -- Skip OMNIBOT players if enabled
+    if config.IGNORE_OMNIBOTS and isOmniBot(player.guid) then
+        debug("Skipping WeaponFire for OMNIBOT: " .. player.name)
+        return 0
+    end
+    
     debug("WeaponFire: " .. player.name .. " fired weapon " .. weapon)
     player.shots = player.shots + 1
     
@@ -354,6 +369,13 @@ function et_Damage(targetNum, attackerNum, damage, dflags, mod)
     if not players[attackerNum] then return end
     
     local player = players[attackerNum]
+    
+    -- Skip OMNIBOT players if enabled
+    if config.IGNORE_OMNIBOTS and isOmniBot(player.guid) then
+        debug("Skipping Damage for OMNIBOT: " .. player.name)
+        return
+    end
+    
     debug("Damage: " .. player.name .. " dealt " .. damage .. " damage to player " .. targetNum)
     player.hits = player.hits + 1
     player.consecutiveHits = player.consecutiveHits + 1
@@ -373,6 +395,13 @@ function et_Obituary(targetNum, attackerNum, meansOfDeath)
     if not players[attackerNum] or attackerNum == targetNum then return end
     
     local player = players[attackerNum]
+    
+    -- Skip OMNIBOT players if enabled
+    if config.IGNORE_OMNIBOTS and isOmniBot(player.guid) then
+        debug("Skipping Obituary for OMNIBOT: " .. player.name)
+        return
+    end
+    
     player.kills = player.kills + 1
     
     -- Run detection after updating stats
@@ -383,7 +412,15 @@ end
 function et_MissedShot(clientNum)
     if not players[clientNum] then return end
     
-    players[clientNum].consecutiveHits = 0
+    local player = players[clientNum]
+    
+    -- Skip OMNIBOT players if enabled
+    if config.IGNORE_OMNIBOTS and isOmniBot(player.guid) then
+        debug("Skipping MissedShot for OMNIBOT: " .. player.name)
+        return
+    end
+    
+    player.consecutiveHits = 0
 end
 
 -- Return 1 if the module loaded successfully
