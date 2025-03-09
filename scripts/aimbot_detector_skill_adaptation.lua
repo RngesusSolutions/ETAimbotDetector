@@ -7,7 +7,7 @@ local SKILL_LEVELS = {
     REGULAR = 1000,   -- 1000-4999 XP
     SKILLED = 5000,   -- 5000-9999 XP
     EXPERT = 10000    -- 10000+ XP
-}
+
 
 -- Threshold adjustments based on skill level
 local SKILL_ADJUSTMENTS = {
@@ -15,7 +15,7 @@ local SKILL_ADJUSTMENTS = {
     REGULAR = { accuracy = 0.05, headshot = 0.05 },
     SKILLED = { accuracy = 0.1, headshot = 0.1 },
     EXPERT = { accuracy = 0.15, headshot = 0.15 }
-}
+
 
 -- Get player skill level based on XP
 local function getPlayerSkillLevel(player)
@@ -74,7 +74,7 @@ local function updatePlayerXP(clientNum, xp)
     if xp > oldXP then
         debugLog("updatePlayerXP: " .. player.name .. " gained " .. (xp - oldXP) .. " XP (total: " .. xp .. ")", 3)
     end
-}
+end
 
 -- ET:Legacy callback: XP Stats
 function et_ClientXPStat(clientNum, stats)
@@ -88,7 +88,7 @@ function et_ClientXPStat(clientNum, stats)
     
     -- Update player XP
     updatePlayerXP(clientNum, totalXP)
-}
+end
 
 -- Integrate skill level adaptation into the main detection system
 local function enhanceDetectionWithSkillAdaptation(clientNum, suspiciousActivity, confidence)
@@ -128,10 +128,10 @@ local function enhanceDetectionWithSkillAdaptation(clientNum, suspiciousActivity
             debugLog("enhanceDetectionWithSkillAdaptation: Suspicious activity confirmed for " .. player.name .. 
                      " despite skill level " .. skillLevel .. " (adjusted confidence: " .. confidence .. ")", 2)
         end
-    }
+    end
     
     return suspiciousActivity, confidence
-}
+end
 
 -- Export functions and data
 return {
@@ -141,4 +141,4 @@ return {
     getAdjustedThreshold = getAdjustedThreshold,
     updatePlayerXP = updatePlayerXP,
     enhanceDetectionWithSkillAdaptation = enhanceDetectionWithSkillAdaptation
-}
+

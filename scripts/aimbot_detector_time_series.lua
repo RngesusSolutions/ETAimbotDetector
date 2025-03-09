@@ -220,4 +220,4 @@ return {
     analyzeTimeSeriesData = analyzeTimeSeriesData,
     analyzeTargetSwitching = analyzeTargetSwitching,
     enhanceDetectionWithTimeSeriesAnalysis = enhanceDetectionWithTimeSeriesAnalysis
-}
+end

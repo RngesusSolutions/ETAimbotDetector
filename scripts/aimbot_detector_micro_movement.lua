@@ -108,4 +108,4 @@ end
 return {
     detectMicroMovements = detectMicroMovements,
     enhanceDetectionWithMicroMovements = enhanceDetectionWithMicroMovements
-}
+end

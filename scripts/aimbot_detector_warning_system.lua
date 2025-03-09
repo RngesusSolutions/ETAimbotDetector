@@ -85,9 +85,9 @@ local function banPlayer(clientNum, reason)
         if isPermanent then
             local banFileCmd = string.format("addip %s", player.ip)
             et.trap_SendConsoleCommand(et.EXEC_APPEND, banFileCmd)
-        }
-    }
-}
+        end
+    end
+end
 
 -- Check if warning cooldown has expired
 local function canWarnPlayer(player)
@@ -101,7 +101,7 @@ local function canWarnPlayer(player)
     
     -- Check if cooldown has expired
     return timeSinceLastWarning >= config.WARNING_COOLDOWN
-}
+end
 
 -- Reset warnings for a player
 local function resetWarnings(clientNum)
@@ -113,8 +113,8 @@ local function resetWarnings(clientNum)
     
     if oldWarnings > 0 then
         debugLog("resetWarnings: Reset " .. oldWarnings .. " warnings for " .. player.name, 2)
-    }
-}
+    end
+end
 
 -- Check if player should be warned based on detection confidence
 local function checkForWarning(clientNum, confidence, detectionCount, reason)
@@ -125,23 +125,23 @@ local function checkForWarning(clientNum, confidence, detectionCount, reason)
     if confidence < config.CONFIDENCE_THRESHOLD then
         debugLog("checkForWarning: Confidence too low for " .. player.name .. " (" .. confidence .. " < " .. config.CONFIDENCE_THRESHOLD .. ")", 3)
         return
-    }
+    end
     
     -- Skip if not enough detection methods triggered
     if detectionCount < 2 then
         debugLog("checkForWarning: Not enough detection methods triggered for " .. player.name .. " (" .. detectionCount .. " < 2)", 3)
         return
-    }
+    end
     
     -- Skip if warning cooldown hasn't expired
     if not canWarnPlayer(player) then
         debugLog("checkForWarning: Warning cooldown not expired for " .. player.name, 3)
         return
-    }
+    end
     
     -- Issue warning
     warnPlayer(clientNum, reason)
-}
+end
 
 -- Export functions
 return {
@@ -150,4 +150,4 @@ return {
     canWarnPlayer = canWarnPlayer,
     resetWarnings = resetWarnings,
     checkForWarning = checkForWarning
-}
+end

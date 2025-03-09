@@ -28,13 +28,12 @@ function et_InitGame(levelTime, randomSeed, restart)
     
     -- Log initialization
     logging.logStartup()
-}
+end
 
 -- Script information
 function et_PrintModuleInformation()
     et.G_Print("^3ETAimbotDetector^7 v1.0 - Advanced aimbot detection for ET:Legacy\n")
-    et.G_Print("^3ETAimbotDetector^7: Developed by Devin AI\n")
-}
+end
 
 -- Calculate overall aimbot confidence score
 local function calculateAimbotConfidence(clientNum)
@@ -98,7 +97,7 @@ local function calculateAimbotConfidence(clientNum)
     debugLog("calculateAimbotConfidence: Final confidence for " .. player.name .. ": " .. avgConfidence .. " (type: " .. aimbotType .. ")", 1)
     
     return avgConfidence, detectionCount, aimbotType, reasonStr
-}
+end
 
 -- Run detection on a player
 local function runDetection(clientNum)
@@ -139,7 +138,7 @@ local function runDetection(clientNum)
     else
         debugLog("runDetection: No aimbot detected for " .. player.name .. " - confidence: " .. confidence .. ", detections: " .. detectionCount, 2)
     end
-}
+end
 
 -- ET:Legacy callback: RunFrame
 function et_RunFrame(levelTime)
@@ -165,7 +164,7 @@ function et_RunFrame(levelTime)
             end
         end
     end
-}
+end
 
 -- Script is now loaded and ready
 et.G_Print("^3ETAimbotDetector^7: All modules loaded successfully\n")
