@@ -8,9 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DemoParser\DemoParser.csproj" />
     <ProjectReference Include="..\AimAnalyzer\AimAnalyzer.csproj" />
-    <!-- Temporarily comment out the Visualization reference 
     <ProjectReference Include="..\Visualization\Visualization.csproj" />
-    -->
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
