@@ -76,6 +76,7 @@ local config = {
     -- Logging settings
     LOG_LEVEL = 2,                    -- 0: None, 1: Minimal, 2: Detailed, 3: Debug
     LOG_FILE = "aimbot_detector.log", -- Log file name
+    LOG_DIR = "logs",                 -- Directory to store log files (will be created if it doesn't exist)
     
     -- Enable/disable specific detection methods
     DETECT_ANGLE_CHANGES = true,      -- Detect suspicious angle changes
@@ -198,6 +199,16 @@ local function getAngleDifference(a1, a2)
     return diff
 end
 
+-- Ensure log directory exists
+local function ensureLogDirExists()
+    if config.LOG_DIR and config.LOG_DIR ~= "" then
+        -- Try to create the directory if it doesn't exist
+        os.execute("mkdir -p " .. config.LOG_DIR)
+        return config.LOG_DIR .. "/"
+    end
+    return ""
+end
+
 -- Log function
 local function log(level, message)
     if level <= config.LOG_LEVEL then
@@ -208,10 +219,13 @@ local function log(level, message)
         et.G_Print(logMessage)
         
         -- Write to log file
-        local file = io.open(config.LOG_FILE, "a")
+        local logDir = ensureLogDirExists()
+        local file = io.open(logDir .. config.LOG_FILE, "a")
         if file then
             file:write(logMessage)
             file:close()
+        else
+            et.G_Print("Warning: Could not open log file: " .. logDir .. config.LOG_FILE .. "\n")
         end
     end
 end
@@ -226,10 +240,13 @@ function debugLog(message, level)
         et.G_Print(debugMessage .. "\n")
         
         -- Also write to log file for persistent debugging
-        local file = io.open("aimbot_debug.log", "a")
+        local logDir = ensureLogDirExists()
+        local file = io.open(logDir .. "aimbot_debug.log", "a")
         if file then
             file:write(debugMessage .. "\n")
             file:close()
+        else
+            et.G_Print("Warning: Could not open debug log file: " .. logDir .. "aimbot_debug.log\n")
         end
     end
 end
