@@ -56,6 +56,9 @@ end
 
 -- Calculate angle difference (accounting for 360 degree wrapping)
 local function getAngleDifference(a1, a2)
+    if a1 == nil or a2 == nil then
+        return 0
+    end
     local diff = math.abs(a1 - a2)
     if diff > 180 then
         diff = 360 - diff
@@ -275,6 +278,9 @@ function et_WeaponFire(clientNum, weapon)
     -- Get current view angles
     local angles = et.gentity_get(clientNum, "ps.viewangles")
     
+    -- Check if angles are valid
+    if angles == nil then return 0 end
+    
     -- Calculate angle change
     local pitchChange = getAngleDifference(angles[0], player.lastAngle.pitch)
     local yawChange = getAngleDifference(angles[1], player.lastAngle.yaw)
@@ -304,8 +310,8 @@ function et_Damage(targetNum, attackerNum, damage, dflags, mod)
     player.hits = player.hits + 1
     player.consecutiveHits = player.consecutiveHits + 1
     
-    -- Check if headshot
-    if bit.band(dflags, 2) ~= 0 then -- 2 is DAMAGE_HEADSHOT
+    -- Check if headshot (bit 2 is DAMAGE_HEADSHOT in ET:Legacy)
+    if et.isBitSet(dflags, 2) then
         player.headshots = player.headshots + 1
     end
     
