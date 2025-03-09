@@ -102,8 +102,8 @@ local function log(level, message)
     end
 end
 
--- Debug logging function
-local function debugLog(message)
+-- Debug logging function (global for ET:Legacy callbacks)
+function debugLog(message)
     if config.DEBUG_MODE then
         local timestamp = os.date("%Y-%m-%d %H:%M:%S")
         local debugMessage = string.format("[DEBUG %s] %s", timestamp, message)
