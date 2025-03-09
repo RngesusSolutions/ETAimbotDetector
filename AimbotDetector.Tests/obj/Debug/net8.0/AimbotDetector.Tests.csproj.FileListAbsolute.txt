@@ -1,7 +1,0 @@
-C:\Users\bahdg\Desktop\ETAimbotDetector\ETAimbotDetector\AimbotDetector.Tests\bin\Debug\net8.0\CoverletSourceRootsMapping_AimbotDetector.Tests
-C:\Users\bahdg\Desktop\ETAimbotDetector\ETAimbotDetector\AimbotDetector.Tests\obj\Debug\net8.0\AimbotDetector.Tests.csproj.AssemblyReference.cache
-C:\Users\bahdg\Desktop\ETAimbotDetector\ETAimbotDetector\AimbotDetector.Tests\obj\Debug\net8.0\AimbotDetector.Tests.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\bahdg\Desktop\ETAimbotDetector\ETAimbotDetector\AimbotDetector.Tests\obj\Debug\net8.0\AimbotDetector.Tests.AssemblyInfoInputs.cache
-C:\Users\bahdg\Desktop\ETAimbotDetector\ETAimbotDetector\AimbotDetector.Tests\obj\Debug\net8.0\AimbotDetector.Tests.AssemblyInfo.cs
-C:\Users\bahdg\Desktop\ETAimbotDetector\ETAimbotDetector\AimbotDetector.Tests\obj\Debug\net8.0\AimbotDetector.Tests.csproj.CoreCompileInputs.cache
-C:\Users\bahdg\Desktop\ETAimbotDetector\ETAimbotDetector\AimbotDetector.Tests\obj\Debug\net8.0\AimbotDetector.Tests.sourcelink.json
