@@ -76,6 +76,36 @@ The script can now differentiate between different types of aimbots:
 
 The detection system uses a confidence scoring approach rather than binary detection, which helps reduce false positives while still catching sophisticated cheats.
 
+### Advanced Detection Methods
+
+#### Flick Shot Pattern Analysis
+
+The script now includes sophisticated flick shot pattern analysis that can distinguish between:
+
+- **Legitimate Pro Player Flicks**: Characterized by large angle changes followed by micro-adjustments (5-30 degrees) to fine-tune aim
+- **Aimbot Snaps**: Characterized by perfect angle changes with no human-like adjustments
+
+The system also analyzes the timing between angle changes and successful hits, flagging suspiciously quick hits after large angle changes.
+
+#### Timing Consistency Analysis
+
+The enhanced timing consistency analysis detects inhuman consistency in shot timing:
+
+- Human players naturally show variance in their shot timing
+- Aimbots often exhibit extremely consistent timing patterns
+- The system flags players with abnormally low variance in their shot timing
+
+#### Multi-Factor Confidence Scoring
+
+The detection system now requires evidence from multiple detection methods before issuing warnings:
+
+- Each detection method contributes a confidence score
+- Different detection methods are weighted based on reliability
+- A minimum of two detection methods must flag suspicious behavior
+- The final confidence score must exceed the threshold to trigger a warning
+
+This approach significantly reduces false positives for skilled players while still effectively catching cheaters.
+
 
 ## Monitoring and Maintenance
 
