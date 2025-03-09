@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AimbotDetector.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+667def0bb4c8e946aaa1b8b2c0a5c52a5c574c92")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2d7df50302ff213714a9f7ae8daa1a3a729ba28e")]
 [assembly: System.Reflection.AssemblyProductAttribute("AimbotDetector.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AimbotDetector.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

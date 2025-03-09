@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{7A8BD6C5-9A6D-4B89-B9FF-25D2E3F0AEA0}|AimbotDetector\\AimbotDetector.csproj|c:\\users\\bahdg\\desktop\\etaimbotdetector\\etaimbotdetector\\aimbotdetector\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7A8BD6C5-9A6D-4B89-B9FF-25D2E3F0AEA0}|AimbotDetector\\AimbotDetector.csproj|solutionrelative:aimbotdetector\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{ED1BC268-07A6-4CE5-B6E5-789E1A1F174C}|DemoParser\\DemoParser.csproj|c:\\users\\bahdg\\desktop\\etaimbotdetector\\etaimbotdetector\\demoparser\\enemydata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{ED1BC268-07A6-4CE5-B6E5-789E1A1F174C}|DemoParser\\DemoParser.csproj|solutionrelative:demoparser\\enemydata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -51,10 +55,6 @@
       "RelativeMoniker": "D:0:0:{7A8BD6C5-9A6D-4B89-B9FF-25D2E3F0AEA0}|AimbotDetector\\AimbotDetector.csproj|solutionrelative:aimbotdetector\\enhancedcommandline.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7A8BD6C5-9A6D-4B89-B9FF-25D2E3F0AEA0}|AimbotDetector\\AimbotDetector.csproj|c:\\users\\bahdg\\desktop\\etaimbotdetector\\etaimbotdetector\\aimbotdetector\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7A8BD6C5-9A6D-4B89-B9FF-25D2E3F0AEA0}|AimbotDetector\\AimbotDetector.csproj|solutionrelative:aimbotdetector\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{ED1BC268-07A6-4CE5-B6E5-789E1A1F174C}|DemoParser\\DemoParser.csproj|c:\\users\\bahdg\\desktop\\etaimbotdetector\\etaimbotdetector\\demoparser\\demofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{ED1BC268-07A6-4CE5-B6E5-789E1A1F174C}|DemoParser\\DemoParser.csproj|solutionrelative:demoparser\\demofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -78,24 +78,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 9,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Visualization.csproj",
-              "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\Visualization.csproj",
-              "RelativeDocumentMoniker": "Visualization\\Visualization.csproj",
-              "ToolTip": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\Visualization.csproj",
-              "RelativeToolTip": "Visualization\\Visualization.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-03-09T02:35:47.362Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "PlayerStatistics.cs",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimAnalyzer\\PlayerStatistics.cs",
               "RelativeDocumentMoniker": "AimAnalyzer\\PlayerStatistics.cs",
@@ -107,7 +94,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "AimAnalyzer.cs",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimAnalyzer\\AimAnalyzer.cs",
               "RelativeDocumentMoniker": "AimAnalyzer\\AimAnalyzer.cs",
@@ -119,7 +106,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "TargetPriorityDetection.cs",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimAnalyzer\\TargetPriorityDetection.cs",
               "RelativeDocumentMoniker": "AimAnalyzer\\TargetPriorityDetection.cs",
@@ -131,7 +118,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "web-report-generator.cs",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\web-report-generator.cs",
               "RelativeDocumentMoniker": "Visualization\\web-report-generator.cs",
@@ -139,12 +126,11 @@
               "RelativeToolTip": "Visualization\\web-report-generator.cs",
               "ViewState": "AgIAAPsDAAAAAAAAAAAUwAkEAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-09T01:53:23.505Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-09T01:53:23.505Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "IntegrationTests.cs",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector.Tests\\IntegrationTests.cs",
               "RelativeDocumentMoniker": "AimbotDetector.Tests\\IntegrationTests.cs",
@@ -156,7 +142,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "AimbotDetector.Tests.csproj",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector.Tests\\AimbotDetector.Tests.csproj",
               "RelativeDocumentMoniker": "AimbotDetector.Tests\\AimbotDetector.Tests.csproj",
@@ -164,12 +150,11 @@
               "RelativeToolTip": "AimbotDetector.Tests\\AimbotDetector.Tests.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-03-09T02:10:47.48Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-09T02:10:47.48Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "EnemyData.cs",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\DemoParser\\EnemyData.cs",
               "RelativeDocumentMoniker": "DemoParser\\EnemyData.cs",
@@ -182,7 +167,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "UnitTest1.cs",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector.Tests\\UnitTest1.cs",
               "RelativeDocumentMoniker": "AimbotDetector.Tests\\UnitTest1.cs",
@@ -194,7 +179,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "ResultVisualizer.cs",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\ResultVisualizer.cs",
               "RelativeDocumentMoniker": "Visualization\\ResultVisualizer.cs",
@@ -202,12 +187,36 @@
               "RelativeToolTip": "Visualization\\ResultVisualizer.cs",
               "ViewState": "AgIAAF8CAAAAAAAAAAAwwG8CAABDAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-09T01:58:13.932Z",
+              "WhenOpened": "2025-03-09T01:58:13.932Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector\\Program.cs",
+              "RelativeDocumentMoniker": "AimbotDetector\\Program.cs",
+              "ToolTip": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector\\Program.cs",
+              "RelativeToolTip": "AimbotDetector\\Program.cs",
+              "ViewState": "AgIAAGgAAAAAAAAAAAAuwHIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-09T02:02:23.886Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
+              "Title": "Visualization.csproj",
+              "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\Visualization.csproj",
+              "RelativeDocumentMoniker": "Visualization\\Visualization.csproj",
+              "ToolTip": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\Visualization.csproj",
+              "RelativeToolTip": "Visualization\\Visualization.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-03-09T02:35:47.362Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "AnalysisResult.cs",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\AnalysisResult.cs",
               "RelativeDocumentMoniker": "Visualization\\AnalysisResult.cs",
@@ -219,7 +228,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "EnhancedCommandLine.cs",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector\\EnhancedCommandLine.cs",
               "RelativeDocumentMoniker": "AimbotDetector\\EnhancedCommandLine.cs",
@@ -231,18 +240,6 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector\\Program.cs",
-              "RelativeDocumentMoniker": "AimbotDetector\\Program.cs",
-              "ToolTip": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector\\Program.cs",
-              "RelativeToolTip": "AimbotDetector\\Program.cs",
-              "ViewState": "AgIAAFIAAAAAAAAAAAAUwHUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-09T02:02:23.886Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 14,
               "Title": "DemoParser.csproj",
               "DocumentMoniker": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\DemoParser\\DemoParser.csproj",
@@ -251,8 +248,7 @@
               "RelativeToolTip": "DemoParser\\DemoParser.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-03-09T01:46:53.245Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-09T01:46:53.245Z"
             },
             {
               "$type": "Document",

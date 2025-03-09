@@ -4,7 +4,8 @@ using System.IO;
 using System.Linq;
 using AimbotDetector.AimAnalyzer;
 using AimbotDetector.DemoParser;
-using AimbotDetector.Visualization;
+// Comment out or conditionally include Visualization namespace
+// using AimbotDetector.Visualization;
 using CommandLine;
 using Newtonsoft.Json;
 
@@ -52,7 +53,7 @@ namespace AimbotDetector
             }
         }
 
-        static void HandleParseError(IEnumerable<e> errors)
+        static void HandleParseError(IEnumerable<Error> errors)
         {
             Console.WriteLine("Error parsing command line arguments:");
             foreach (var error in errors)
