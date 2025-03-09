@@ -62,6 +62,11 @@ The script monitors player behavior using ET:Legacy's Lua callbacks:
 2. **Headshot Ratio Analysis**: Tracks the ratio of headshots to total kills, flagging players with unusually high headshot rates.
 3. **Accuracy Monitoring**: Calculates hit-to-shot ratio and flags players with inhuman accuracy.
 4. **Consecutive Hits Tracking**: Detects players who consistently hit targets without missing.
+5. **Flick Shot Pattern Analysis**: Distinguishes between legitimate pro player flicks (which include micro-adjustments) and aimbot snaps (which are unnaturally precise).
+6. **Timing Consistency Analysis**: Detects inhuman consistency in shot timing that's characteristic of aimbots.
+7. **Target Switching Detection**: Identifies suspiciously fast switching between targets.
+
+The script uses a sophisticated multi-factor confidence scoring system that requires evidence from multiple detection methods before issuing warnings. This approach significantly reduces false positives for skilled players while still effectively catching cheaters.
 
 When suspicious behavior is detected, the script issues warnings to the player. After a configurable number of warnings, the player is temporarily banned. Multiple temporary bans can lead to a permanent ban.
 

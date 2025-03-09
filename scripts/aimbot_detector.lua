@@ -6,66 +6,66 @@
 local weaponThresholds = {
     -- Default thresholds
     default = {
-        accuracy = 0.8,
-        headshot = 0.6,
-        angleChange = 160
+        accuracy = 0.85,              -- Increased from 0.8
+        headshot = 0.7,               -- Increased from 0.6
+        angleChange = 170             -- Increased from 160
     },
     -- Sniper rifles
     weapon_K43 = {
-        accuracy = 0.85,
-        headshot = 0.7,
-        angleChange = 170
+        accuracy = 0.9,               -- Increased from 0.85
+        headshot = 0.8,               -- Increased from 0.7
+        angleChange = 175             -- Unchanged
     },
     weapon_K43_scope = {
-        accuracy = 0.9,
-        headshot = 0.8,
-        angleChange = 175
+        accuracy = 0.95,              -- Increased from 0.9
+        headshot = 0.85,              -- Increased from 0.8
+        angleChange = 175             -- Unchanged
     },
     weapon_M1Garand_scope = {
-        accuracy = 0.9,
-        headshot = 0.8,
-        angleChange = 175
+        accuracy = 0.95,              -- Increased from 0.9
+        headshot = 0.85,              -- Increased from 0.8
+        angleChange = 175             -- Unchanged
     },
     -- Machine guns
     weapon_MP40 = {
-        accuracy = 0.7,
-        headshot = 0.5,
-        angleChange = 150
+        accuracy = 0.75,              -- Increased from 0.7
+        headshot = 0.6,               -- Increased from 0.5
+        angleChange = 160             -- Increased from 150
     },
     weapon_Thompson = {
-        accuracy = 0.7,
-        headshot = 0.5,
-        angleChange = 150
+        accuracy = 0.75,              -- Increased from 0.7
+        headshot = 0.6,               -- Increased from 0.5
+        angleChange = 160             -- Increased from 150
     },
     -- Pistols
     weapon_Luger = {
-        accuracy = 0.75,
-        headshot = 0.6,
-        angleChange = 160
+        accuracy = 0.8,               -- Increased from 0.75
+        headshot = 0.7,               -- Increased from 0.6
+        angleChange = 165             -- Increased from 160
     },
     weapon_Colt = {
-        accuracy = 0.75,
-        headshot = 0.6,
-        angleChange = 160
+        accuracy = 0.8,               -- Increased from 0.75
+        headshot = 0.7,               -- Increased from 0.6
+        angleChange = 165             -- Increased from 160
     }
 }
 
 local config = {
     -- Detection thresholds
     MAX_ANGLE_CHANGE = 180,           -- Maximum angle change in degrees that's considered suspicious
-    ANGLE_CHANGE_THRESHOLD = 120,     -- Angle change threshold for suspicious activity (decreased from 170)
-    HEADSHOT_RATIO_THRESHOLD = 0.6,   -- Ratio of headshots to total kills that's considered suspicious (decreased from 0.8)
-    ACCURACY_THRESHOLD = 0.7,         -- Accuracy threshold that's considered suspicious (decreased from 0.9)
-    CONSECUTIVE_HITS_THRESHOLD = 10,  -- Number of consecutive hits that's considered suspicious (decreased from 15)
+    ANGLE_CHANGE_THRESHOLD = 150,     -- Angle change threshold for suspicious activity (increased from 120)
+    HEADSHOT_RATIO_THRESHOLD = 0.7,   -- Ratio of headshots to total kills that's considered suspicious (increased from 0.6)
+    ACCURACY_THRESHOLD = 0.8,         -- Accuracy threshold that's considered suspicious (increased from 0.7)
+    CONSECUTIVE_HITS_THRESHOLD = 10,  -- Number of consecutive hits that's considered suspicious
     
     -- Advanced detection settings
-    DETECTION_INTERVAL = 3000,        -- Minimum time between detections in milliseconds (decreased from 5000)
+    DETECTION_INTERVAL = 3000,        -- Minimum time between detections in milliseconds
     PATTERN_DETECTION = true,         -- Enable pattern-based detection
     STATISTICAL_ANALYSIS = true,      -- Enable statistical analysis
     TIME_SERIES_ANALYSIS = true,      -- Enable time-series analysis
     MICRO_MOVEMENT_DETECTION = true,  -- Enable micro-movement detection for humanized aimbots
-    MIN_SAMPLES_REQUIRED = 15,        -- Minimum number of samples required for statistical analysis (decreased from 20)
-    CONFIDENCE_THRESHOLD = 0.6,       -- Confidence threshold for aimbot detection (decreased from 0.8)
+    MIN_SAMPLES_REQUIRED = 15,        -- Minimum number of samples required for statistical analysis
+    CONFIDENCE_THRESHOLD = 0.7,       -- Confidence threshold for aimbot detection (increased from 0.6)
     
     -- Time-series analysis settings
     TIME_SERIES_THRESHOLD = 0.6,      -- Threshold for time-series analysis confidence
@@ -203,6 +203,18 @@ local function calculateTimingConsistency(player)
     
     -- Normalize standard deviation as a percentage of the average
     local normalizedStdDev = stdDev / avg
+    
+    -- Human players show more variance in their timing
+    -- Extremely low variance is suspicious (aimbots have very consistent timing)
+    if normalizedStdDev < 0.05 and #timings >= 10 then
+        -- Extremely low variance is highly suspicious
+        debugLog("calculateTimingConsistency: Extremely low timing variance detected (" .. normalizedStdDev .. "), highly suspicious", 2)
+        return 0.9
+    elseif normalizedStdDev < 0.1 and #timings >= 8 then
+        -- Very low variance is moderately suspicious
+        debugLog("calculateTimingConsistency: Very low timing variance detected (" .. normalizedStdDev .. "), moderately suspicious", 2)
+        return 0.7
+    end
     
     -- Return consistency score (1 - normalized standard deviation)
     -- Higher score means more consistent timing (suspicious)
@@ -488,11 +500,27 @@ local function detectAngleChanges(clientNum)
     
     -- Check for "snapping" behavior (high angles followed by very low angles)
     local snapCount = 0
+    local legitimateFlickCount = 0
+    
     for i = 2, #player.angleChanges do
+        -- Aimbot snap: high angle change with no adjustment
         if player.angleChanges[i] > 100 and player.angleChanges[i-1] < 5 then
             snapCount = snapCount + 1
             debugLog("detectAngleChanges: Snap detected at sample " .. i .. " (" .. player.angleChanges[i] .. "° after " .. player.angleChanges[i-1] .. "°)", 3)
         end
+        
+        -- Legitimate flick: high angle change followed by small adjustments
+        if player.angleChanges[i] > 100 and i < #player.angleChanges and 
+           player.angleChanges[i+1] >= 5 and player.angleChanges[i+1] <= 30 then
+            legitimateFlickCount = legitimateFlickCount + 1
+            debugLog("detectAngleChanges: Legitimate flick pattern detected at sample " .. i, 3)
+        end
+    end
+    
+    -- Reduce confidence if we detect legitimate flick patterns
+    if legitimateFlickCount > 0 then
+        patternConfidence = patternConfidence - (legitimateFlickCount * 0.1)
+        debugLog("detectAngleChanges: Detected " .. legitimateFlickCount .. " legitimate flick patterns, reducing confidence", 2)
     end
     
     if snapCount > 3 then
@@ -696,6 +724,80 @@ local function detectTargetSwitching(clientNum)
     return false, 0
 end
 
+-- Detect flick shot patterns with timing analysis
+local function detectFlickPattern(clientNum)
+    local player = players[clientNum]
+    if not player or #player.angleChanges < 10 then return false, 0 end
+    
+    local flicks = 0
+    local adjustments = 0
+    local suspiciousFlicks = 0
+    local quickHitFlicks = 0
+    
+    -- Analyze angle change patterns
+    for i = 2, #player.angleChanges - 1 do
+        -- Detect large angle changes (flicks)
+        if player.angleChanges[i] > 100 then
+            flicks = flicks + 1
+            
+            -- Check for post-flick adjustments (human behavior)
+            if player.angleChanges[i+1] >= 5 and player.angleChanges[i+1] <= 30 then
+                adjustments = adjustments + 1
+            else
+                suspiciousFlicks = suspiciousFlicks + 1
+            end
+            
+            -- Check if this flick resulted in a quick hit
+            if player.shotTimings and player.hitTimings and 
+               i <= #player.shotTimings and i <= #player.hitTimings then
+                -- If time between angle change and hit is very small, it's suspicious
+                local timeToHit = player.hitTimings[i] - player.shotTimings[i]
+                if timeToHit >= 0 and timeToHit < 100 then -- Less than 100ms is very fast
+                    quickHitFlicks = quickHitFlicks + 1
+                    debugLog("Flick pattern analysis: Quick hit detected - angle change to hit time: " .. timeToHit .. "ms", 3)
+                end
+            end
+        end
+    end
+    
+    -- Calculate ratio of suspicious flicks to total flicks
+    local suspiciousRatio = 0
+    local quickHitRatio = 0
+    if flicks > 0 then
+        suspiciousRatio = suspiciousFlicks / flicks
+        quickHitRatio = quickHitFlicks / flicks
+    end
+    
+    debugLog("Flick pattern analysis: " .. player.name .. " - flicks=" .. flicks .. 
+        ", adjustments=" .. adjustments .. ", suspicious=" .. suspiciousFlicks .. 
+        ", quickHits=" .. quickHitFlicks ..
+        ", suspiciousRatio=" .. suspiciousRatio .. 
+        ", quickHitRatio=" .. quickHitRatio, 2)
+    
+    -- Detect suspicious patterns
+    local isDetected = false
+    local confidence = 0
+    local reason = ""
+    
+    -- Check for quick hit flicks (as requested by user)
+    if quickHitRatio > 0.5 and flicks >= 3 then
+        confidence = quickHitRatio - 0.5
+        reason = string.format("Suspicious quick-hit flicks (%.2f of flicks resulted in immediate hits)", quickHitRatio)
+        isDetected = true
+    -- Check for suspicious flick patterns
+    elseif suspiciousRatio > 0.7 and flicks >= 3 then
+        confidence = suspiciousRatio - 0.7
+        reason = string.format("Suspicious flick pattern (%.2f of flicks without human-like adjustments)", suspiciousRatio)
+        isDetected = true
+    end
+    
+    if isDetected then
+        return true, confidence, reason
+    end
+    
+    return false, 0
+end
+
 -- Calculate overall aimbot confidence score
 local function calculateAimbotConfidence(clientNum)
     local player = players[clientNum]
@@ -773,6 +875,18 @@ local function calculateAimbotConfidence(clientNum)
             table.insert(reasons, reason)
             
             debugLog("Target switching detection found suspicious pattern: " .. reason)
+        end
+    end
+    
+    -- Flick pattern detection (new)
+    if player.angleChanges and #player.angleChanges >= 10 then
+        suspicious, confidence, reason = detectFlickPattern(clientNum)
+        if suspicious then
+            totalConfidence = totalConfidence + confidence * 1.5 -- Weight flick pattern detection higher
+            detectionCount = detectionCount + 1
+            table.insert(reasons, reason)
+            
+            debugLog("Flick pattern detection found suspicious pattern: " .. reason, 2)
         end
     end
     
