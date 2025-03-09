@@ -1,0 +1,11 @@
+C:\Users\bahdg\Desktop\ETAimbotDetector\AimbotDetector\obj\Debug\net6.0\AimbotDetector.csproj.AssemblyReference.cache
+C:\Users\bahdg\Desktop\ETAimbotDetector\AimbotDetector\obj\Debug\net6.0\AimbotDetector.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\bahdg\Desktop\ETAimbotDetector\AimbotDetector\obj\Debug\net6.0\AimbotDetector.AssemblyInfoInputs.cache
+C:\Users\bahdg\Desktop\ETAimbotDetector\AimbotDetector\obj\Debug\net6.0\AimbotDetector.AssemblyInfo.cs
+C:\Users\bahdg\Desktop\ETAimbotDetector\AimbotDetector\obj\Debug\net6.0\AimbotDetector.csproj.CoreCompileInputs.cache
+C:\Users\bahdg\Desktop\ETAimbotDetector\ETAimbotDetector\AimbotDetector\obj\Debug\net6.0\AimbotDetector.csproj.AssemblyReference.cache
+C:\Users\bahdg\Desktop\ETAimbotDetector\ETAimbotDetector\AimbotDetector\obj\Debug\net6.0\AimbotDetector.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\bahdg\Desktop\ETAimbotDetector\ETAimbotDetector\AimbotDetector\obj\Debug\net6.0\AimbotDetector.AssemblyInfoInputs.cache
+C:\Users\bahdg\Desktop\ETAimbotDetector\ETAimbotDetector\AimbotDetector\obj\Debug\net6.0\AimbotDetector.AssemblyInfo.cs
+C:\Users\bahdg\Desktop\ETAimbotDetector\ETAimbotDetector\AimbotDetector\obj\Debug\net6.0\AimbotDetector.csproj.CoreCompileInputs.cache
+C:\Users\bahdg\Desktop\ETAimbotDetector\ETAimbotDetector\AimbotDetector\obj\Debug\net6.0\AimbotDetector.sourcelink.json

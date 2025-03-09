@@ -1,0 +1,255 @@
+{
+  "version": 3,
+  "targets": {
+    "net6.0": {
+      "CommandLineParser/2.9.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/CommandLine.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/CommandLine.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Newtonsoft.Json/13.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/Newtonsoft.Json.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/Newtonsoft.Json.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "AimAnalyzer/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "DemoParser": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/AimAnalyzer.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/AimAnalyzer.dll": {}
+        }
+      },
+      "DemoParser/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/DemoParser.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/DemoParser.dll": {}
+        }
+      },
+      "Visualization/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "AimAnalyzer": "1.0.0",
+          "DemoParser": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Visualization.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Visualization.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CommandLineParser/2.9.1": {
+      "sha512": "OE0sl1/sQ37bjVsPKKtwQlWDgqaxWgtme3xZz7JssWUzg5JpMIyHgCTY9MVMxOg48fJ1AgGT3tgdH5m/kQ5xhA==",
+      "type": "package",
+      "path": "commandlineparser/2.9.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "CommandLine20.png",
+        "License.md",
+        "README.md",
+        "commandlineparser.2.9.1.nupkg.sha512",
+        "commandlineparser.nuspec",
+        "lib/net40/CommandLine.dll",
+        "lib/net40/CommandLine.xml",
+        "lib/net45/CommandLine.dll",
+        "lib/net45/CommandLine.xml",
+        "lib/net461/CommandLine.dll",
+        "lib/net461/CommandLine.xml",
+        "lib/netstandard2.0/CommandLine.dll",
+        "lib/netstandard2.0/CommandLine.xml"
+      ]
+    },
+    "Newtonsoft.Json/13.0.3": {
+      "sha512": "HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ==",
+      "type": "package",
+      "path": "newtonsoft.json/13.0.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.md",
+        "README.md",
+        "lib/net20/Newtonsoft.Json.dll",
+        "lib/net20/Newtonsoft.Json.xml",
+        "lib/net35/Newtonsoft.Json.dll",
+        "lib/net35/Newtonsoft.Json.xml",
+        "lib/net40/Newtonsoft.Json.dll",
+        "lib/net40/Newtonsoft.Json.xml",
+        "lib/net45/Newtonsoft.Json.dll",
+        "lib/net45/Newtonsoft.Json.xml",
+        "lib/net6.0/Newtonsoft.Json.dll",
+        "lib/net6.0/Newtonsoft.Json.xml",
+        "lib/netstandard1.0/Newtonsoft.Json.dll",
+        "lib/netstandard1.0/Newtonsoft.Json.xml",
+        "lib/netstandard1.3/Newtonsoft.Json.dll",
+        "lib/netstandard1.3/Newtonsoft.Json.xml",
+        "lib/netstandard2.0/Newtonsoft.Json.dll",
+        "lib/netstandard2.0/Newtonsoft.Json.xml",
+        "newtonsoft.json.13.0.3.nupkg.sha512",
+        "newtonsoft.json.nuspec",
+        "packageIcon.png"
+      ]
+    },
+    "AimAnalyzer/1.0.0": {
+      "type": "project",
+      "path": "../AimAnalyzer/AimAnalyzer.csproj",
+      "msbuildProject": "../AimAnalyzer/AimAnalyzer.csproj"
+    },
+    "DemoParser/1.0.0": {
+      "type": "project",
+      "path": "../DemoParser/DemoParser.csproj",
+      "msbuildProject": "../DemoParser/DemoParser.csproj"
+    },
+    "Visualization/1.0.0": {
+      "type": "project",
+      "path": "../Visualization/Visualization.csproj",
+      "msbuildProject": "../Visualization/Visualization.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net6.0": [
+      "AimAnalyzer >= 1.0.0",
+      "CommandLineParser >= 2.9.1",
+      "DemoParser >= 1.0.0",
+      "Newtonsoft.Json >= 13.0.3",
+      "Visualization >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\bahdg\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector\\AimbotDetector.csproj",
+      "projectName": "AimbotDetector",
+      "projectPath": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector\\AimbotDetector.csproj",
+      "packagesPath": "C:\\Users\\bahdg\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimbotDetector\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\bahdg\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net6.0"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "projectReferences": {
+            "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimAnalyzer\\AimAnalyzer.csproj": {
+              "projectPath": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\AimAnalyzer\\AimAnalyzer.csproj"
+            },
+            "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\DemoParser\\DemoParser.csproj": {
+              "projectPath": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\DemoParser\\DemoParser.csproj"
+            },
+            "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\Visualization.csproj": {
+              "projectPath": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\Visualization.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
+      },
+      "SdkAnalysisLevel": "9.0.200"
+    },
+    "frameworks": {
+      "net6.0": {
+        "targetAlias": "net6.0",
+        "dependencies": {
+          "CommandLineParser": {
+            "target": "Package",
+            "version": "[2.9.1, )"
+          },
+          "Newtonsoft.Json": {
+            "target": "Package",
+            "version": "[13.0.3, )"
+          }
+        },
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[6.0.36, 6.0.36]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[6.0.36, 6.0.36]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[6.0.36, 6.0.36]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[6.0.36, 6.0.36]"
+          }
+        ],
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200\\RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

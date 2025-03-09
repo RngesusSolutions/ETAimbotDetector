@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "/rsqTWqU8KA=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\bahdg\\Desktop\\ETAimbotDetector\\ETAimbotDetector\\Visualization\\Visualization.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\bahdg\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.36\\microsoft.windowsdesktop.app.ref.6.0.36.nupkg.sha512",
+    "C:\\Users\\bahdg\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.36\\microsoft.netcore.app.ref.6.0.36.nupkg.sha512",
+    "C:\\Users\\bahdg\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.36\\microsoft.aspnetcore.app.ref.6.0.36.nupkg.sha512"
+  ],
+  "logs": []
+}
