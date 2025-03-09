@@ -14,6 +14,7 @@ namespace AimbotDetector.DemoParser
         public List<EntityData> Entities { get; private set; }
         private int _currentTimestamp = 0;
         private readonly Dictionary<int, PlayerPositionHistory> _playerPositions = new();
+        private DemoFormat _demoFormat = DemoFormat.Unknown;
 
         // ET demo constants
         private const string DEMO_MAGIC = "ETLDEMO2";
@@ -21,6 +22,11 @@ namespace AimbotDetector.DemoParser
         private const int MAX_ENTITIES = 1024;
         private const int CS_PLAYERS_START = 544;
         private const int CS_PLAYERS_END = CS_PLAYERS_START + MAX_PLAYERS;
+
+        // ET: Legacy demo constants
+        private const string DEMO_MAGIC_ETLEGACY = "ETLDEMO2";
+        private const int PROTOCOL_VERSION_ETLEGACY = 84;
+        private const string DEMO_EXT_ETLEGACY = "dm_";
 
         // ET team constants
         private const int TEAM_AXIS = 1;
@@ -43,62 +49,168 @@ namespace AimbotDetector.DemoParser
                 using (FileStream fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read))
                 using (BinaryReader reader = new BinaryReader(fs))
                 {
-                    // Parse demo file header
-                    string magic = new string(reader.ReadChars(8));
-                    if (magic != DEMO_MAGIC)
+                    // Detect demo format
+                    _demoFormat = DetectDemoFormat(reader);
+                    
+                    switch (_demoFormat)
                     {
-                        Console.WriteLine("Invalid demo file format. Expected ETLDEMO2.");
-                        return false;
-                    }
-
-                    int protocol = reader.ReadInt32();
-                    Console.WriteLine($"Demo protocol: {protocol}");
-
-                    // Parse demo contents
-                    while (fs.Position < fs.Length)
-                    {
-                        try
-                        {
-                            byte commandByte = reader.ReadByte();
-                            DemoCommand command = (DemoCommand)commandByte;
-
-                            switch (command)
-                            {
-                                case DemoCommand.ServerCommand:
-                                    ParseServerCommand(reader);
-                                    break;
-                                case DemoCommand.ClientCommand:
-                                    ParseClientCommand(reader);
-                                    break;
-                                case DemoCommand.Gamestate:
-                                    ParseGamestate(reader);
-                                    break;
-                                case DemoCommand.Snapshot:
-                                    ParseSnapshot(reader);
-                                    break;
-                                case DemoCommand.EOF:
-                                    Console.WriteLine("Reached end of demo file");
-                                    return FinalizePlayerData();
-                                default:
-                                    Console.WriteLine($"Unknown command: {command} at position {fs.Position}");
-                                    return false;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Error parsing demo at position {fs.Position}: {ex.Message}");
-                            Console.WriteLine(ex.StackTrace);
-                            return false;
-                        }
+                        case DemoFormat.ETLegacy:
+                            return ParseETLegacyDemo(reader);
+                        case DemoFormat.Unknown:
+                        default:
+                            // Try the original format as fallback
+                            return ParseOriginalDemo(reader);
                     }
                 }
-                return FinalizePlayerData();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error opening demo file: {ex.Message}");
                 return false;
             }
+        }
+        
+        private DemoFormat DetectDemoFormat(BinaryReader reader)
+        {
+            long originalPosition = reader.BaseStream.Position;
+            try
+            {
+                // Try to read ET: Legacy format
+                string magic = new string(reader.ReadChars(8));
+                if (magic == DEMO_MAGIC_ETLEGACY)
+                {
+                    int protocol = EndianConversion.LittleLong(reader.ReadInt32());
+                    if (protocol == PROTOCOL_VERSION_ETLEGACY)
+                    {
+                        Console.WriteLine($"Detected ET: Legacy demo format (protocol {protocol})");
+                        return DemoFormat.ETLegacy;
+                    }
+                }
+                
+                // Reset position for other format detection
+                reader.BaseStream.Position = originalPosition;
+                
+                // Check if it's a standard format
+                magic = new string(reader.ReadChars(8));
+                if (magic == DEMO_MAGIC)
+                {
+                    int protocol = reader.ReadInt32();
+                    Console.WriteLine($"Detected standard demo format (protocol {protocol})");
+                    return DemoFormat.Unknown; // Using Unknown for the original format
+                }
+                
+                Console.WriteLine("Unknown demo format");
+                return DemoFormat.Unknown;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error detecting demo format: {ex.Message}");
+                reader.BaseStream.Position = originalPosition;
+                return DemoFormat.Unknown;
+            }
+        }
+        
+        private bool ParseETLegacyDemo(BinaryReader reader)
+        {
+            // Skip header (already read in DetectDemoFormat)
+            reader.BaseStream.Position = 12; // 8 bytes magic + 4 bytes protocol
+            
+            // Parse demo contents
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
+            {
+                try
+                {
+                    byte commandByte = reader.ReadByte();
+                    DemoCommand command = (DemoCommand)commandByte;
+                    
+                    switch (command)
+                    {
+                        case DemoCommand.ServerCommand:
+                            ParseETLegacyServerCommand(reader);
+                            break;
+                        case DemoCommand.ClientCommand:
+                            ParseETLegacyClientCommand(reader);
+                            break;
+                        case DemoCommand.Gamestate:
+                            ParseETLegacyGamestate(reader);
+                            break;
+                        case DemoCommand.Snapshot:
+                            ParseETLegacySnapshot(reader);
+                            break;
+                        case DemoCommand.EOF:
+                            Console.WriteLine("Reached end of demo file");
+                            return FinalizePlayerData();
+                        default:
+                            Console.WriteLine($"Unknown command: {command} at position {reader.BaseStream.Position}");
+                            return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error parsing demo at position {reader.BaseStream.Position}: {ex.Message}");
+                    Console.WriteLine(ex.StackTrace);
+                    return false;
+                }
+            }
+            
+            return FinalizePlayerData();
+        }
+        
+        private bool ParseOriginalDemo(BinaryReader reader)
+        {
+            // Reset position to beginning
+            reader.BaseStream.Position = 0;
+            
+            // Parse demo file header
+            string magic = new string(reader.ReadChars(8));
+            if (magic != DEMO_MAGIC)
+            {
+                Console.WriteLine("Invalid demo file format. Expected ETLDEMO2.");
+                return false;
+            }
+
+            int protocol = reader.ReadInt32();
+            Console.WriteLine($"Demo protocol: {protocol}");
+
+            // Parse demo contents
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
+            {
+                try
+                {
+                    byte commandByte = reader.ReadByte();
+                    DemoCommand command = (DemoCommand)commandByte;
+
+                    switch (command)
+                    {
+                        case DemoCommand.ServerCommand:
+                            ParseServerCommand(reader);
+                            break;
+                        case DemoCommand.ClientCommand:
+                            ParseClientCommand(reader);
+                            break;
+                        case DemoCommand.Gamestate:
+                            ParseGamestate(reader);
+                            break;
+                        case DemoCommand.Snapshot:
+                            ParseSnapshot(reader);
+                            break;
+                        case DemoCommand.EOF:
+                            Console.WriteLine("Reached end of demo file");
+                            return FinalizePlayerData();
+                        default:
+                            Console.WriteLine($"Unknown command: {command} at position {reader.BaseStream.Position}");
+                            return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error parsing demo at position {reader.BaseStream.Position}: {ex.Message}");
+                    Console.WriteLine(ex.StackTrace);
+                    return false;
+                }
+            }
+            
+            return FinalizePlayerData();
         }
 
         private bool FinalizePlayerData()
@@ -716,13 +828,252 @@ namespace AimbotDetector.DemoParser
             }
         }
 
+        private void ParseETLegacyServerCommand(BinaryReader reader)
+        {
+            int sequenceNumber = EndianConversion.LittleLong(reader.ReadInt32());
+            string commandString = ReadETLegacyString(reader);
+            
+            Events.Add(new GameEvent
+            {
+                Type = GameEventType.ServerCommand,
+                SequenceNumber = sequenceNumber,
+                Data = commandString,
+                Timestamp = _currentTimestamp
+            });
+
+            // Parse server command for game state info (team changes, etc.)
+            if (commandString.StartsWith("cs"))
+            {
+                string[] parts = commandString.Split(' ');
+                if (parts.Length >= 3)
+                {
+                    if (int.TryParse(parts[1], out int configIndex))
+                    {
+                        ProcessConfigString(configIndex, string.Join(" ", parts.Skip(2)));
+                    }
+                }
+            }
+        }
+
+        private void ParseETLegacyClientCommand(BinaryReader reader)
+        {
+            int sequenceNumber = EndianConversion.LittleLong(reader.ReadInt32());
+            string commandString = ReadETLegacyString(reader);
+            
+            Events.Add(new GameEvent
+            {
+                Type = GameEventType.ClientCommand,
+                SequenceNumber = sequenceNumber,
+                Data = commandString,
+                Timestamp = _currentTimestamp
+            });
+
+            // Extract aim data and firing info from client commands
+            ExtractAimData(commandString, sequenceNumber);
+
+            // Parse command for weapon selection
+            if (commandString.StartsWith("weapon "))
+            {
+                string[] parts = commandString.Split(' ');
+                if (parts.Length > 1 && int.TryParse(parts[1], out int weaponId))
+                {
+                    UpdatePlayerWeapon(weaponId);
+                }
+            }
+        }
+
+        private void ParseETLegacyGamestate(BinaryReader reader)
+        {
+            int sequenceNumber = EndianConversion.LittleLong(reader.ReadInt32());
+
+            // Reset game state
+            _currentTimestamp = 0;
+            Entities.Clear();
+
+            for (int i = 0; i < MAX_ENTITIES; i++)
+            {
+                Entities.Add(new EntityData { EntityId = i });
+            }
+
+            // Parse configstrings
+            int numConfigStrings = EndianConversion.LittleLong(reader.ReadInt32());
+            Console.WriteLine($"Parsing {numConfigStrings} config strings");
+
+            for (int i = 0; i < numConfigStrings; i++)
+            {
+                int index = EndianConversion.LittleShort(reader.ReadInt16());
+                string configString = ReadETLegacyString(reader);
+                ProcessConfigString(index, configString);
+            }
+
+            // Parse baseline entities
+            int numBaselines = EndianConversion.LittleLong(reader.ReadInt32());
+            Console.WriteLine($"Parsing {numBaselines} entity baselines");
+
+            for (int i = 0; i < numBaselines; i++)
+            {
+                int entityNum = EndianConversion.LittleShort(reader.ReadInt16());
+                if (entityNum >= 0 && entityNum < MAX_ENTITIES)
+                {
+                    // Parse entity state
+                    EntityData entityData = ParseETLegacyEntityData(reader);
+                    entityData.EntityId = entityNum;
+                    Entities[entityNum] = entityData;
+                }
+                else
+                {
+                    // Skip entity state data
+                    SkipETLegacyEntityData(reader);
+                }
+            }
+
+            Events.Add(new GameEvent
+            {
+                Type = GameEventType.Gamestate,
+                SequenceNumber = sequenceNumber,
+                Timestamp = 0
+            });
+        }
+
+        private void ParseETLegacySnapshot(BinaryReader reader)
+        {
+            int sequenceNumber = EndianConversion.LittleLong(reader.ReadInt32());
+            int serverTime = EndianConversion.LittleLong(reader.ReadInt32());
+            _currentTimestamp = serverTime;
+
+            // Parse player state
+            PlayerState playerState = ParseETLegacyPlayerState(reader);
+
+            // Extract the demo recorder's view
+            int clientNum = playerState.ClientNum;
+            Vector3 position = playerState.Position;
+            Vector3 viewAngles = playerState.ViewAngles;
+
+            // Parse delta entities
+            int numEntities = EndianConversion.LittleShort(reader.ReadInt16());
+            for (int i = 0; i < numEntities; i++)
+            {
+                int entityNum = EndianConversion.LittleShort(reader.ReadInt16());
+                if (entityNum >= 0 && entityNum < MAX_ENTITIES)
+                {
+                    EntityData entityData = ParseETLegacyEntityData(reader);
+                    entityData.EntityId = entityNum;
+                    entityData.Timestamp = serverTime;
+
+                    // Update entity in our collection
+                    Entities[entityNum] = entityData;
+
+                    // Track player positions
+                    if (entityData.IsPlayer && entityData.ClientNum != clientNum)
+                    {
+                        UpdatePlayerPosition(entityData.ClientNum, entityData.Position, entityData.Team, serverTime);
+                    }
+                }
+                else
+                {
+                    // Skip entity state data
+                    SkipETLegacyEntityData(reader);
+                }
+            }
+
+            // Create snapshot event
+            Events.Add(new GameEvent
+            {
+                Type = GameEventType.Snapshot,
+                SequenceNumber = sequenceNumber,
+                Timestamp = serverTime,
+                Position = position,
+                ViewAngles = viewAngles
+            });
+
+            // Add aim data for the client player
+            AddPlayerAimData(serverTime, position, viewAngles, playerState);
+        }
+
+        private PlayerState ParseETLegacyPlayerState(BinaryReader reader)
+        {
+            var state = new PlayerState();
+
+            // Read basic player state data from ET
+            state.ClientNum = EndianConversion.LittleLong(reader.ReadInt32());
+            state.CommandTime = EndianConversion.LittleLong(reader.ReadInt32());
+
+            // Read movement state
+            state.Position = ReadETLegacyVector3(reader);
+            state.Velocity = ReadETLegacyVector3(reader);
+
+            // View angles
+            state.ViewAngles = ReadETLegacyVector3(reader);
+
+            // Weapon info
+            state.WeaponId = EndianConversion.LittleLong(reader.ReadInt32());
+            state.WeaponState = EndianConversion.LittleLong(reader.ReadInt32());
+
+            // Health, etc.
+            state.Health = EndianConversion.LittleLong(reader.ReadInt32());
+            state.MaxHealth = EndianConversion.LittleLong(reader.ReadInt32());
+
+            // Skip additional player state data
+            reader.ReadBytes(160); // Simplified - actual size may vary
+
+            return state;
+        }
+
+        private EntityData ParseETLegacyEntityData(BinaryReader reader)
+        {
+            var entity = new EntityData();
+
+            // Parse entity type
+            entity.EntityType = reader.ReadByte();
+
+            // Parse position
+            entity.Position = ReadETLegacyVector3(reader);
+
+            // Parse angles
+            entity.Angles = ReadETLegacyVector3(reader);
+
+            // Additional entity state (simplified)
+            int modelIndex = EndianConversion.LittleShort(reader.ReadInt16());
+            int clientNum = EndianConversion.LittleShort(reader.ReadInt16());
+            int team = reader.ReadByte();
+
+            entity.ModelIndex = modelIndex;
+            entity.ClientNum = clientNum;
+            entity.Team = team;
+
+            // Determine if this is a player entity
+            entity.IsPlayer = (clientNum >= 0 && clientNum < MAX_PLAYERS && entity.EntityType == 1);
+
+            // Skip additional entity data
+            reader.ReadBytes(24); // Simplified - actual size may vary
+
+            return entity;
+        }
+
         private void SkipEntityData(BinaryReader reader)
         {
             // Skip entity state data
             reader.ReadBytes(64); // Simplified - adjust as needed for ET: Legacy
         }
 
+        private void SkipETLegacyEntityData(BinaryReader reader)
+        {
+            // Skip entity state data for ET: Legacy format
+            reader.ReadBytes(64); // Simplified - adjust as needed for ET: Legacy
+        }
+
         private string ReadString(BinaryReader reader)
+        {
+            List<char> chars = new List<char>();
+            char c;
+            while ((c = reader.ReadChar()) != '\0')
+            {
+                chars.Add(c);
+            }
+            return new string(chars.ToArray());
+        }
+
+        private string ReadETLegacyString(BinaryReader reader)
         {
             List<char> chars = new List<char>();
             char c;
@@ -738,6 +1089,14 @@ namespace AimbotDetector.DemoParser
             float x = reader.ReadSingle();
             float y = reader.ReadSingle();
             float z = reader.ReadSingle();
+            return new Vector3(x, y, z);
+        }
+
+        private Vector3 ReadETLegacyVector3(BinaryReader reader)
+        {
+            float x = EndianConversion.LittleFloat(reader.ReadSingle());
+            float y = EndianConversion.LittleFloat(reader.ReadSingle());
+            float z = EndianConversion.LittleFloat(reader.ReadSingle());
             return new Vector3(x, y, z);
         }
     }

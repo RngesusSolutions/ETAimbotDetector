@@ -21,7 +21,9 @@ namespace AimbotDetector.AimAnalyzer
                 new TargetPriorityDetection(), // Now using the full implementation
                 new SmoothnessAnalysisRule(),
                 new AimJitterDetection(),
-                new AimLockDetection()
+                new AimLockDetection(),
+                new VelocityPredictionDetectionRule(), // Add new rule for velocity prediction
+                new PingPredictionDetectionRule()      // Add new rule for ping prediction
             };
         }
 
@@ -80,6 +82,8 @@ namespace AimbotDetector.AimAnalyzer
                 "Smoothness Analysis" => 1.0f,
                 "Aim Jitter Detection" => 0.8f,
                 "Aim Lock Detection" => 1.0f,
+                "Velocity Prediction Detection" => 0.9f, // Add weight for new rule
+                "Ping Prediction Detection" => 0.8f,     // Add weight for new rule
                 _ => 0.5f
             };
         }
