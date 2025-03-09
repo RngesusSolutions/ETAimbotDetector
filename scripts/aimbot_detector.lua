@@ -69,7 +69,7 @@ local function initPlayerData(clientNum)
         tempBans = 0,
     }
     
-    debug("Player initialized: " .. name .. " (GUID: " .. guid .. ")")
+    debugLog("Player initialized: " .. name .. " (GUID: " .. guid .. ")")
 end
 
 -- Calculate angle difference (accounting for 360 degree wrapping)
@@ -103,7 +103,7 @@ local function log(level, message)
 end
 
 -- Debug logging function
-local function debug(message)
+local function debugLog(message)
     if config.DEBUG_MODE then
         local timestamp = os.date("%Y-%m-%d %H:%M:%S")
         local debugMessage = string.format("[DEBUG %s] %s", timestamp, message)
@@ -160,7 +160,7 @@ local function warnPlayer(clientNum, reason)
     log(1, string.format("Warning issued to %s (%s): %s", 
         player.name, player.guid, reason))
     
-    debug("Warning issued to " .. player.name .. " for " .. reason)
+    debugLog("Warning issued to " .. player.name .. " for " .. reason)
     
     -- Check if player should be banned
     if player.warnings >= config.WARNINGS_BEFORE_BAN then
@@ -243,11 +243,11 @@ local function runDetection(clientNum)
     
     -- Skip detection for OMNIBOT players if enabled
     if config.IGNORE_OMNIBOTS and isOmniBot(player.guid) then
-        debug("Skipping detection for OMNIBOT: " .. player.name)
+        debugLog("Skipping detection for OMNIBOT: " .. player.name)
         return
     end
     
-    debug("Running detection for player: " .. player.name)
+    debugLog("Running detection for player: " .. player.name)
     
     local suspicious, reason
     
@@ -280,7 +280,7 @@ end
 -- ET:Legacy callback: InitGame
 function et_InitGame(levelTime, randomSeed, restart)
     log(1, "Aimbot Detector initialized")
-    debug("DEBUG mode enabled")
+    debugLog("DEBUG mode enabled")
     
     -- Reset player data on map change
     players = {}
@@ -296,7 +296,7 @@ function et_ClientConnect(clientNum, firstTime, isBot)
     if config.IGNORE_OMNIBOTS and isOmniBot(players[clientNum].guid) then
         log(1, string.format("OMNIBOT detected and will be ignored: %s (%s)", 
             players[clientNum].name, players[clientNum].guid))
-        debug("OMNIBOT detected: " .. players[clientNum].name)
+        debugLog("OMNIBOT detected: " .. players[clientNum].name)
     else
         log(2, string.format("Player connected: %s (%s)", 
             players[clientNum].name, players[clientNum].guid))
@@ -330,11 +330,11 @@ function et_WeaponFire(clientNum, weapon)
     
     -- Skip OMNIBOT players if enabled
     if config.IGNORE_OMNIBOTS and isOmniBot(player.guid) then
-        debug("Skipping WeaponFire for OMNIBOT: " .. player.name)
+        debugLog("Skipping WeaponFire for OMNIBOT: " .. player.name)
         return 0
     end
     
-    debug("WeaponFire: " .. player.name .. " fired weapon " .. weapon)
+    debugLog("WeaponFire: " .. player.name .. " fired weapon " .. weapon)
     player.shots = player.shots + 1
     
     -- Get current view angles
@@ -372,11 +372,11 @@ function et_Damage(targetNum, attackerNum, damage, dflags, mod)
     
     -- Skip OMNIBOT players if enabled
     if config.IGNORE_OMNIBOTS and isOmniBot(player.guid) then
-        debug("Skipping Damage for OMNIBOT: " .. player.name)
+        debugLog("Skipping Damage for OMNIBOT: " .. player.name)
         return
     end
     
-    debug("Damage: " .. player.name .. " dealt " .. damage .. " damage to player " .. targetNum)
+    debugLog("Damage: " .. player.name .. " dealt " .. damage .. " damage to player " .. targetNum)
     player.hits = player.hits + 1
     player.consecutiveHits = player.consecutiveHits + 1
     
@@ -398,7 +398,7 @@ function et_Obituary(targetNum, attackerNum, meansOfDeath)
     
     -- Skip OMNIBOT players if enabled
     if config.IGNORE_OMNIBOTS and isOmniBot(player.guid) then
-        debug("Skipping Obituary for OMNIBOT: " .. player.name)
+        debugLog("Skipping Obituary for OMNIBOT: " .. player.name)
         return
     end
     
@@ -416,7 +416,7 @@ function et_MissedShot(clientNum)
     
     -- Skip OMNIBOT players if enabled
     if config.IGNORE_OMNIBOTS and isOmniBot(player.guid) then
-        debug("Skipping MissedShot for OMNIBOT: " .. player.name)
+        debugLog("Skipping MissedShot for OMNIBOT: " .. player.name)
         return
     end
     
