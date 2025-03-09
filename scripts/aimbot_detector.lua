@@ -24,17 +24,33 @@ local config = {
     DETECT_HEADSHOT_RATIO = true,     -- Detect suspicious headshot ratio
     DETECT_ACCURACY = true,           -- Detect suspicious accuracy
     DETECT_CONSECUTIVE_HITS = true,   -- Detect suspicious consecutive hits
+    
+    -- New options
+    DEBUG_MODE = false,               -- Enable/disable debug logging to server console
+    IGNORE_OMNIBOTS = true,           -- Skip detection for OMNIBOT players
+    CHAT_WARNINGS = true,             -- Show warnings in player chat
 }
 
 -- Player data storage
 local players = {}
 
+-- Check if player is an OMNIBOT
+local function isOmniBot(guid)
+    if not guid then return false end
+    return string.find(string.lower(guid), "omnibot") ~= nil
+end
+
 -- Initialize player data
 local function initPlayerData(clientNum)
+    local userinfo = et.trap_GetUserinfo(clientNum)
+    local name = et.Info_ValueForKey(userinfo, "name")
+    local guid = et.Info_ValueForKey(userinfo, "cl_guid")
+    local ip = et.Info_ValueForKey(userinfo, "ip")
+    
     players[clientNum] = {
-        name = et.Info_ValueForKey(et.trap_GetUserinfo(clientNum), "name"),
-        guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientNum), "cl_guid"),
-        ip = et.Info_ValueForKey(et.trap_GetUserinfo(clientNum), "ip"),
+        name = name,
+        guid = guid,
+        ip = ip,
         
         -- Tracking variables
         lastAngle = {pitch = 0, yaw = 0},
@@ -52,6 +68,8 @@ local function initPlayerData(clientNum)
         -- Ban history
         tempBans = 0,
     }
+    
+    debug("Player initialized: " .. name .. " (GUID: " .. guid .. ")")
 end
 
 -- Calculate angle difference (accounting for 360 degree wrapping)
@@ -81,6 +99,15 @@ local function log(level, message)
             file:write(logMessage)
             file:close()
         end
+    end
+end
+
+-- Debug logging function
+local function debug(message)
+    if config.DEBUG_MODE then
+        local timestamp = os.date("%Y-%m-%d %H:%M:%S")
+        local debugMessage = string.format("[DEBUG %s] %s", timestamp, message)
+        et.G_Print(debugMessage .. "\n")
     end
 end
 
@@ -121,12 +148,19 @@ local function warnPlayer(clientNum, reason)
     local warningMessage = string.format("^1WARNING^7: Suspicious activity detected (%s). Warning %d/%d", 
         reason, player.warnings, config.WARNINGS_BEFORE_BAN)
     
-    -- Send message to player
+    -- Send center-print message to player
     et.trap_SendServerCommand(clientNum, "cp " .. warningMessage)
+    
+    -- Send chat message to player if enabled
+    if config.CHAT_WARNINGS then
+        et.trap_SendServerCommand(clientNum, "chat \"" .. warningMessage .. "\"")
+    end
     
     -- Log warning
     log(1, string.format("Warning issued to %s (%s): %s", 
         player.name, player.guid, reason))
+    
+    debug("Warning issued to " .. player.name .. " for " .. reason)
     
     -- Check if player should be banned
     if player.warnings >= config.WARNINGS_BEFORE_BAN then
@@ -204,6 +238,17 @@ end
 
 -- Run all detection methods
 local function runDetection(clientNum)
+    local player = players[clientNum]
+    if not player then return end
+    
+    -- Skip detection for OMNIBOT players if enabled
+    if config.IGNORE_OMNIBOTS and isOmniBot(player.guid) then
+        debug("Skipping detection for OMNIBOT: " .. player.name)
+        return
+    end
+    
+    debug("Running detection for player: " .. player.name)
+    
     local suspicious, reason
     
     -- Run each detection method
@@ -235,6 +280,7 @@ end
 -- ET:Legacy callback: InitGame
 function et_InitGame(levelTime, randomSeed, restart)
     log(1, "Aimbot Detector initialized")
+    debug("DEBUG mode enabled")
     
     -- Reset player data on map change
     players = {}
@@ -273,6 +319,7 @@ function et_WeaponFire(clientNum, weapon)
     if not players[clientNum] then return 0 end
     
     local player = players[clientNum]
+    debug("WeaponFire: " .. player.name .. " fired weapon " .. weapon)
     player.shots = player.shots + 1
     
     -- Get current view angles
@@ -307,6 +354,7 @@ function et_Damage(targetNum, attackerNum, damage, dflags, mod)
     if not players[attackerNum] then return end
     
     local player = players[attackerNum]
+    debug("Damage: " .. player.name .. " dealt " .. damage .. " damage to player " .. targetNum)
     player.hits = player.hits + 1
     player.consecutiveHits = player.consecutiveHits + 1
     
