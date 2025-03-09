@@ -25,6 +25,20 @@ The script includes a configuration section at the top of the file that can be m
 - `ACCURACY_THRESHOLD`: Accuracy threshold that's considered suspicious (0.0-1.0)
 - `CONSECUTIVE_HITS_THRESHOLD`: Number of consecutive hits that's considered suspicious
 
+### Advanced Detection Settings
+
+- `DETECTION_INTERVAL`: Minimum time between detections in milliseconds
+- `PATTERN_DETECTION`: Enable pattern-based detection
+- `STATISTICAL_ANALYSIS`: Enable statistical analysis
+- `MIN_SAMPLES_REQUIRED`: Minimum number of samples required for statistical analysis
+- `CONFIDENCE_THRESHOLD`: Confidence threshold for aimbot detection
+
+### Weapon-Specific Settings
+
+- `WEAPON_SPECIFIC_THRESHOLDS`: Enable weapon-specific thresholds
+
+The script now includes weapon-specific thresholds that adjust detection sensitivity based on the weapon being used. This helps reduce false positives for weapons that naturally have higher accuracy or headshot rates.
+
 ### Warning and Ban Settings
 
 - `WARNINGS_BEFORE_BAN`: Number of warnings before a temporary ban is issued
@@ -46,6 +60,22 @@ The script includes a configuration section at the top of the file that can be m
 - `DETECT_HEADSHOT_RATIO`: Enable/disable suspicious headshot ratio detection
 - `DETECT_ACCURACY`: Enable/disable suspicious accuracy detection
 - `DETECT_CONSECUTIVE_HITS`: Enable/disable suspicious consecutive hits detection
+
+### Additional Options
+
+- `DEBUG_MODE`: Enable/disable debug logging to server console
+- `IGNORE_OMNIBOTS`: Skip detection for OMNIBOT players
+- `CHAT_WARNINGS`: Show warnings in player chat
+
+### Aimbot Type Detection
+
+The script can now differentiate between different types of aimbots:
+
+- **Normal Aimbots**: Characterized by sudden, large angle changes and perfect accuracy
+- **Humanized Aimbots**: Characterized by smoother movements but still with suspicious patterns
+
+The detection system uses a confidence scoring approach rather than binary detection, which helps reduce false positives while still catching sophisticated cheats.
+
 
 ## Monitoring and Maintenance
 

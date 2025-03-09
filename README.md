@@ -4,14 +4,16 @@ A Lua script for ET:Legacy servers that detects and automatically bans players u
 
 ## Features
 
-- Multiple detection methods for identifying aimbot users:
-  - Suspicious angle changes detection
-  - Headshot ratio analysis
-  - Accuracy monitoring
-  - Consecutive hits tracking
+- Multiple advanced detection methods for identifying aimbot users:
+  - Pattern-based angle change detection
+  - Statistical analysis with confidence scoring
+  - Weapon-specific accuracy thresholds
+  - Humanized vs. normal aimbot differentiation
+  - Time-series analysis of player behavior
 - Configurable warning and ban system
 - Detailed logging for server administrators
 - Customizable detection thresholds
+- Reduced false positives through statistical analysis
 
 ## Installation
 
