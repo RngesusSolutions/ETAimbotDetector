@@ -164,4 +164,4 @@ return {
     detectFlickPattern = detectFlickPattern,
     analyzeFlickTiming = analyzeFlickTiming,
     enhanceDetectionWithFlickAnalysis = enhanceDetectionWithFlickAnalysis
-}
+end

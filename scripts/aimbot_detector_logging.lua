@@ -88,7 +88,7 @@ local function debugLog(message, level)
     if config.SERVER_CONSOLE_DEBUG and level <= config.SERVER_CONSOLE_DEBUG_LEVEL then
         et.G_Print(debugMessage .. "\n")
     end
-}
+end
 
 -- Log detection event
 local function logDetection(player, confidence, detectionCount, aimbotType, reason)
@@ -98,7 +98,7 @@ local function logDetection(player, confidence, detectionCount, aimbotType, reas
         player.name, player.guid, confidence, detectionCount, aimbotType, reason)
     
     log(1, detectionMessage)
-}
+end
 
 -- Log warning event
 local function logWarning(player, reason)
@@ -108,7 +108,7 @@ local function logWarning(player, reason)
         player.name, player.guid, player.warnings, config.MAX_WARNINGS, reason)
     
     log(1, warningMessage)
-}
+end
 
 -- Log ban event
 local function logBan(player, isPermanent, reason)
@@ -118,7 +118,7 @@ local function logBan(player, isPermanent, reason)
         player.name, player.guid, isPermanent and "permanent" or "temporary", reason)
     
     log(1, banMessage)
-}
+end
 
 -- Log player stats for debugging
 local function logPlayerStats(player)
@@ -140,7 +140,7 @@ local function logPlayerStats(player)
         
         debugLog(weaponStatsMessage, 3)
     end
-}
+end
 
 -- Log system startup
 local function logStartup()
@@ -157,7 +157,7 @@ local function logStartup()
             end
         end
     end
-}
+end
 
 -- Export functions
 return {

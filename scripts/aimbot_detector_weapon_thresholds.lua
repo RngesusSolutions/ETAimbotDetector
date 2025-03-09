@@ -69,7 +69,7 @@ local weaponThresholds = {
         headshot = 0.2,
         angleChange = 145
     }
-}
+end
 
 -- Get weapon-specific threshold
 local function getWeaponThreshold(weapon, thresholdType)
@@ -113,7 +113,7 @@ local function initWeaponStats(player, weapon)
             kills = 0,
             accuracy = 0,
             headshotRatio = 0
-        }
+        end
     end
 end
 
@@ -145,7 +145,7 @@ local function updateWeaponStats(player, weapon, isHit, isHeadshot, isKill)
     if player.weaponStats[weapon].kills > 0 then
         player.weaponStats[weapon].headshotRatio = player.weaponStats[weapon].headshots / player.weaponStats[weapon].kills
     end
-}
+end
 
 -- Check for suspicious accuracy with weapon-specific thresholds
 local function detectWeaponSpecificAccuracy(clientNum)
@@ -184,7 +184,7 @@ local function detectWeaponSpecificAccuracy(clientNum)
     end
     
     return false, 0
-}
+end
 
 -- Check for suspicious headshot ratio with weapon-specific thresholds
 local function detectWeaponSpecificHeadshotRatio(clientNum)
@@ -223,7 +223,7 @@ local function detectWeaponSpecificHeadshotRatio(clientNum)
     end
     
     return false, 0
-}
+end
 
 -- Integrate weapon-specific thresholds into the main detection system
 local function enhanceDetectionWithWeaponThresholds(clientNum, totalConfidence, detectionCount, reasons)
@@ -256,7 +256,7 @@ local function enhanceDetectionWithWeaponThresholds(clientNum, totalConfidence, 
     end
     
     return totalConfidence, detectionCount, reasons
-}
+end
 
 -- Export functions and data
 return {
@@ -268,4 +268,4 @@ return {
     detectWeaponSpecificAccuracy = detectWeaponSpecificAccuracy,
     detectWeaponSpecificHeadshotRatio = detectWeaponSpecificHeadshotRatio,
     enhanceDetectionWithWeaponThresholds = enhanceDetectionWithWeaponThresholds
-}
+end
