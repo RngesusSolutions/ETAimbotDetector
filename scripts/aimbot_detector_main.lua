@@ -3,20 +3,27 @@
 -- Enhanced version with improved detection algorithms and configurable thresholds.
 
 -- Load all script modules
-local microMovementDetection = dofile("scripts/aimbot_detector_micro_movement.lua")
-local flickAnalysis = dofile("scripts/aimbot_detector_flick_analysis.lua")
-local timeSeriesAnalysis = dofile("scripts/aimbot_detector_time_series.lua")
-local weaponThresholds = dofile("scripts/aimbot_detector_weapon_thresholds.lua")
-local skillAdaptation = dofile("scripts/aimbot_detector_skill_adaptation.lua")
-local warningSystem = dofile("scripts/aimbot_detector_warning_system.lua")
-local logging = dofile("scripts/aimbot_detector_logging.lua")
+local microMovementDetection = wolfa_requireModule("aimbot.micro_movement")
+local flickAnalysis = wolfa_requireModule("aimbot.flick_analysis")
+local timeSeriesAnalysis = wolfa_requireModule("aimbot.time_series")
+local weaponThresholds = wolfa_requireModule("aimbot.weapon_thresholds")
+local skillAdaptation = wolfa_requireModule("aimbot.skill_adaptation")
+local warningSystem = wolfa_requireModule("aimbot.warning_system")
+local logging = wolfa_requireModule("aimbot.logging")
 
 -- Load base configuration
-dofile("scripts/aimbot_detector.lua")
+wolfa_requireModule("aimbot.config")
 
 -- Initialize global functions
 debugLog = logging.debugLog
 log = logging.log
+
+-- Load common functions
+local common = wolfa_requireModule("aimbot.common")
+
+-- Initialize global functions
+initPlayerData = common.initPlayerData
+updatePlayerAngles = common.updatePlayerAngles
 
 -- Initialize the script
 function et_InitGame(levelTime, randomSeed, restart)
