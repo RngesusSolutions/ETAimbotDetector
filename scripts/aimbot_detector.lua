@@ -92,9 +92,13 @@ local config = {
     DETECT_ACCURACY = true,           -- Detect suspicious accuracy
     DETECT_CONSECUTIVE_HITS = true,   -- Detect suspicious consecutive hits
     
-    -- New options
-    DEBUG_MODE = true,                -- Enable/disable debug logging to server console
+    -- Debug options
+    DEBUG_MODE = true,                -- Enable/disable debug logging to file
     DEBUG_LEVEL = 3,                  -- Debug level: 1=basic, 2=detailed, 3=verbose
+    SERVER_CONSOLE_DEBUG = true,      -- Enable/disable debug printing to server console
+    SERVER_CONSOLE_DEBUG_LEVEL = 2,   -- Debug level for server console: 1=basic, 2=detailed, 3=verbose
+    
+    -- Other options
     IGNORE_OMNIBOTS = true,           -- Skip detection for OMNIBOT players
     CHAT_WARNINGS = true,             -- Show warnings in player chat
 }
@@ -356,12 +360,12 @@ end
 function debugLog(message, level)
     level = level or 1 -- Default to level 1 if not specified
     
+    local timestamp = os.date("%Y-%m-%d %H:%M:%S")
+    local debugMessage = string.format("[DEBUG-%d %s] %s", level, timestamp, message)
+    
+    -- Write to log file if debug mode is enabled
     if config.DEBUG_MODE and level <= config.DEBUG_LEVEL then
-        local timestamp = os.date("%Y-%m-%d %H:%M:%S")
-        local debugMessage = string.format("[DEBUG-%d %s] %s", level, timestamp, message)
-        et.G_Print(debugMessage .. "\n")
-        
-        -- Also write to log file for persistent debugging
+        -- Write to log file for persistent debugging
         local logDir = ensureLogDirExists()
         local file = io.open(logDir .. "aimbot_debug.log", "a")
         if file then
@@ -370,6 +374,22 @@ function debugLog(message, level)
         else
             et.G_Print("Warning: Could not open debug log file: " .. logDir .. "aimbot_debug.log\n")
         end
+    end
+    
+    -- Print to server console if server console debug is enabled
+    if config.SERVER_CONSOLE_DEBUG and level <= config.SERVER_CONSOLE_DEBUG_LEVEL then
+        et.G_Print(debugMessage .. "\n")
+    end
+end
+
+-- Print debug message to server console only
+local function serverConsoleDebug(message, level)
+    level = level or 1 -- Default to level 1 if not specified
+    
+    if config.SERVER_CONSOLE_DEBUG and level <= config.SERVER_CONSOLE_DEBUG_LEVEL then
+        local timestamp = os.date("%Y-%m-%d %H:%M:%S")
+        local debugMessage = string.format("[SERVER-DEBUG-%d %s] %s", level, timestamp, message)
+        et.G_Print(debugMessage .. "\n")
     end
 end
 
