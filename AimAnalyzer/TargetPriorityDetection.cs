@@ -239,6 +239,10 @@ namespace AimbotDetector.AimAnalyzer
 
         private int FindAimDataIndexByTimestamp(List<AimData> aimData, int timestamp)
         {
+            // Check for null or empty aimData
+            if (aimData == null || aimData.Count == 0)
+                return -1;
+                
             for (int i = 0; i < aimData.Count; i++)
             {
                 if (aimData[i].Timestamp == timestamp)
@@ -247,9 +251,13 @@ namespace AimbotDetector.AimAnalyzer
                 }
 
                 // Handle case where exact timestamp might not be found
+                // Fix logic error: ensure we're finding the closest timestamp
                 if (i > 0 && aimData[i - 1].Timestamp < timestamp && aimData[i].Timestamp > timestamp)
                 {
-                    return i;
+                    // Return the closer timestamp
+                    int prevDiff = timestamp - aimData[i - 1].Timestamp;
+                    int currDiff = aimData[i].Timestamp - timestamp;
+                    return prevDiff < currDiff ? i - 1 : i;
                 }
             }
 
@@ -259,6 +267,11 @@ namespace AimbotDetector.AimAnalyzer
         private List<Tuple<Vector3, float>> FindPotentialTargets(List<AimData> aimData, int currentIndex, int timeWindow)
         {
             var targets = new List<Tuple<Vector3, float>>();
+            
+            // Check for null or empty aimData or invalid index
+            if (aimData == null || aimData.Count == 0 || currentIndex < 0 || currentIndex >= aimData.Count)
+                return targets;
+                
             int targetTimestamp = aimData[currentIndex].Timestamp;
 
             // Look at nearby timestamps to find other potential targets

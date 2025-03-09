@@ -241,19 +241,39 @@ namespace AimbotDetector
 
         private void ValidateOptions()
         {
-            if (!_options.ReportOnly && !File.Exists(_options.InputFile))
+            try
             {
-                throw new FileNotFoundException($"Input demo file not found: {_options.InputFile}");
-            }
+                if (!_options.ReportOnly && !File.Exists(_options.InputFile))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Error: Input demo file not found: {_options.InputFile}");
+                    Console.ResetColor();
+                    throw new FileNotFoundException($"Input demo file not found: {_options.InputFile}");
+                }
 
-            if (!string.IsNullOrEmpty(_options.CompareWithReport) && !File.Exists(_options.CompareWithReport))
-            {
-                throw new FileNotFoundException($"Comparison report file not found: {_options.CompareWithReport}");
-            }
+                if (!string.IsNullOrEmpty(_options.CompareWithReport) && !File.Exists(_options.CompareWithReport))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Error: Comparison report file not found: {_options.CompareWithReport}");
+                    Console.ResetColor();
+                    throw new FileNotFoundException($"Comparison report file not found: {_options.CompareWithReport}");
+                }
 
-            if (_options.Threshold > 1.0f || _options.Threshold < -1.0f)
+                if (_options.Threshold > 1.0f || _options.Threshold < -1.0f)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Error: Threshold must be between 0.0 and 1.0, or -1 for default");
+                    Console.ResetColor();
+                    throw new ArgumentOutOfRangeException("Threshold must be between 0.0 and 1.0, or -1 for default");
+                }
+            }
+            catch (Exception ex)
             {
-                throw new ArgumentOutOfRangeException("Threshold must be between 0.0 and 1.0, or -1 for default");
+                if (_options.Verbose)
+                {
+                    Console.WriteLine(ex.StackTrace);
+                }
+                throw; // Rethrow to be handled by the caller
             }
         }
 
@@ -521,36 +541,86 @@ namespace AimbotDetector
         {
             Console.WriteLine("Generating visualizations...");
 
-            var visualizer = new Visualization.ResultVisualizer();
-
-            // Generate visualizations for each player
-            foreach (var result in results.Values)
+            try
             {
-                if (result.PlayerAimData != null && result.PlayerAimData.Count > 0)
+                // Check for null results
+                if (results == null || results.Count == 0)
                 {
-                    string visualizationPath = Path.Combine(outputDirectory, $"{SanitizeFilename(result.PlayerName)}_visualization.html");
-                    visualizer.GenerateVisualization(result.PlayerAimData, result.DetectionResults, visualizationPath);
+                    Console.WriteLine("Warning: No results to generate visualizations from.");
+                    return;
                 }
-            }
 
-            // Generate summary visualization
-            string summaryVisualizationPath = Path.Combine(outputDirectory, "summary_visualization.html");
-            visualizer.GenerateSummaryVisualization(results, summaryVisualizationPath);
+                var visualizer = new Visualization.ResultVisualizer();
+
+                // Generate visualizations for each player
+                foreach (var result in results.Values)
+                {
+                    if (result != null && result.PlayerAimData != null && result.PlayerAimData.Count > 0 && result.DetectionResults != null)
+                    {
+                        try
+                        {
+                            string visualizationPath = Path.Combine(outputDirectory, $"{SanitizeFilename(result.PlayerName)}_visualization.html");
+                            visualizer.GenerateVisualization(result.PlayerAimData, result.DetectionResults, visualizationPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error generating visualization for player {result.PlayerName}: {ex.Message}");
+                            if (_options.Verbose)
+                            {
+                                Console.WriteLine(ex.StackTrace);
+                            }
+                            // Continue with other players rather than crashing
+                        }
+                    }
+                }
+
+                // Generate summary visualization
+                string summaryVisualizationPath = Path.Combine(outputDirectory, "summary_visualization.html");
+                visualizer.GenerateSummaryVisualization(results, summaryVisualizationPath);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error generating visualizations: {ex.Message}");
+                if (_options.Verbose)
+                {
+                    Console.WriteLine(ex.StackTrace);
+                }
+                // Continue execution rather than crashing the application
+            }
         }
 
         private void GenerateWebReport(Dictionary<string, AnalysisResult> results, string outputDirectory)
         {
             Console.WriteLine("Generating web report...");
 
-            // Create web report directory
-            string webReportDir = Path.Combine(outputDirectory, "web_report");
-            Directory.CreateDirectory(webReportDir);
+            try
+            {
+                // Check for null results
+                if (results == null || results.Count == 0)
+                {
+                    Console.WriteLine("Warning: No results to generate web report from.");
+                    return;
+                }
 
-            // Generate interactive HTML report
-            var webReportGenerator = new Visualization.WebReportGenerator();
-            webReportGenerator.GenerateInteractiveReport(results, _options.InputFile, webReportDir);
+                // Create web report directory
+                string webReportDir = Path.Combine(outputDirectory, "web_report");
+                Directory.CreateDirectory(webReportDir);
 
-            Console.WriteLine($"Web report generated at: {webReportDir}");
+                // Generate interactive HTML report
+                var webReportGenerator = new Visualization.WebReportGenerator();
+                webReportGenerator.GenerateInteractiveReport(results, _options.InputFile, webReportDir);
+
+                Console.WriteLine($"Web report generated at: {webReportDir}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error generating web report: {ex.Message}");
+                if (_options.Verbose)
+                {
+                    Console.WriteLine(ex.StackTrace);
+                }
+                // Continue execution rather than crashing the application
+            }
         }
 
         private void ExportPlayerStatistics(Dictionary<string, AnalysisResult> results, string outputDirectory)

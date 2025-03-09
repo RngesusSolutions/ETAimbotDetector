@@ -900,6 +900,10 @@ namespace AimbotDetector.AimAnalyzer
             float avgDistance = totalDistance / sequence.Count;
 
             // Calculate lock strength (inversely proportional to average distance)
+            // Prevent division by zero
+            if (MAX_LOCK_VARIATION <= 0.0001f)
+                return 0;
+                
             return MathF.Max(0, 1.0f - (avgDistance / MAX_LOCK_VARIATION));
         }
     }

@@ -114,19 +114,25 @@ namespace AimbotDetector
         public DateTime AnalyzedTimestamp { get; set; }
 
         // New fields for enhanced analysis
-        public PlayerStatistics PlayerStatistics { get; set; }
-        public List<AimData> PlayerAimData { get; set; }
+        public PlayerStatistics? PlayerStatistics { get; set; }
+        public List<AimData>? PlayerAimData { get; set; } = new List<AimData>();
 
         // Constructor to convert from the enhanced result format
         public AnalysisResult(PlayerData player, List<DetectionResult> detectionResults, float probability, bool isCheating)
         {
-            PlayerName = player.Name;
+            if (player == null)
+                throw new ArgumentNullException(nameof(player));
+                
+            if (detectionResults == null)
+                throw new ArgumentNullException(nameof(detectionResults));
+                
+            PlayerName = player.Name ?? string.Empty;
             PlayerID = player.PlayerID;
             CheatingProbability = probability;
             IsCheating = isCheating;
-            DetectionResults = detectionResults;
+            DetectionResults = new List<DetectionResult>(detectionResults);
             AnalyzedTimestamp = DateTime.Now;
-            PlayerAimData = player.AimData;
+            PlayerAimData = player.AimData != null ? new List<AimData>(player.AimData) : new List<AimData>();
         }
 
         // Default constructor for deserialization

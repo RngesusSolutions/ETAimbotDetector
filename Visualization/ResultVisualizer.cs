@@ -255,7 +255,7 @@ namespace AimbotDetector.Visualization
                 if (hasEnemyData)
                 {
                     html.AppendLine("                  if (context[0].datasetIndex === 3) {"); // Enemy data
-                    html.AppendLine("                    return `Angle to enemy: ${context[0].raw.angle.toFixed(2)}°`;");
+                    html.AppendLine("                    return `Angle to enemy: ${context[0].raw.angle.toFixed(2)}ï¿½`;");
                     html.AppendLine("                  }");
                 }
 
@@ -432,9 +432,19 @@ namespace AimbotDetector.Visualization
                 html.AppendLine("</body>");
                 html.AppendLine("</html>");
 
-                // Write the HTML to the output file
-                File.WriteAllText(outputPath, html.ToString());
-                Console.WriteLine($"Visualization generated at {outputPath}");
+                // Write the HTML to the output file using proper resource management
+                try
+                {
+                    using (StreamWriter writer = new StreamWriter(outputPath))
+                    {
+                        writer.Write(html.ToString());
+                    }
+                    Console.WriteLine($"Visualization generated at {outputPath}");
+                }
+                catch (IOException ioEx)
+                {
+                    Console.WriteLine($"Error writing visualization file: {ioEx.Message}");
+                }
             }
             catch (Exception ex)
             {
@@ -498,7 +508,7 @@ namespace AimbotDetector.Visualization
                 html.AppendLine("    </div>");
 
                 // NEW: Team comparison chart (if data available)
-                bool hasTeamData = results.Values.Any(r => r.PlayerStatistics?.TeamAverages != null);
+                bool hasTeamData = results.Values.Any(r => r.PlayerStatistics != null && r.PlayerStatistics.TeamAverages != null);
                 if (hasTeamData)
                 {
                     html.AppendLine("    <div class=\"chart-container\">");
@@ -616,7 +626,7 @@ namespace AimbotDetector.Visualization
                     html.AppendLine("      // Prepare team comparison data");
                     html.AppendLine("      const teamCompData = [];");
 
-                    foreach (var result in results.Values.Where(r => r.PlayerStatistics?.TeamAverages != null))
+                    foreach (var result in results.Values.Where(r => r.PlayerStatistics != null && r.PlayerStatistics.TeamAverages != null))
                     {
                         html.AppendLine($"      teamCompData.push({{");
                         html.AppendLine($"        name: \"{result.PlayerName}\",");
@@ -776,9 +786,19 @@ namespace AimbotDetector.Visualization
                 html.AppendLine("</body>");
                 html.AppendLine("</html>");
 
-                // Write the HTML to the output file
-                File.WriteAllText(outputPath, html.ToString());
-                Console.WriteLine($"Summary visualization generated at {outputPath}");
+                // Write the HTML to the output file using proper resource management
+                try
+                {
+                    using (StreamWriter writer = new StreamWriter(outputPath))
+                    {
+                        writer.Write(html.ToString());
+                    }
+                    Console.WriteLine($"Summary visualization generated at {outputPath}");
+                }
+                catch (IOException ioEx)
+                {
+                    Console.WriteLine($"Error writing visualization file: {ioEx.Message}");
+                }
             }
             catch (Exception ex)
             {
