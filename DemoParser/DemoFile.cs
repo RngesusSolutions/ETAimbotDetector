@@ -379,7 +379,7 @@ namespace AimbotDetector.DemoParser
                         if (Players.Count > 0)
                         {
                             var player = Players[0]; // Demo recorder
-                            if (player.AimData.Count > 0)
+                            if (player.AimData != null && player.AimData.Count > 0)
                             {
                                 var lastAimData = player.AimData[player.AimData.Count - 1];
                                 lastAimData.UserCmdPitchDelta = pitchDelta;
@@ -397,7 +397,7 @@ namespace AimbotDetector.DemoParser
             if (Players.Count > 0)
             {
                 var player = Players[0]; // Assume first player is the demo recorder
-                if (player.AimData.Count > 0)
+                if (player.AimData != null && player.AimData.Count > 0)
                 {
                     player.AimData[player.AimData.Count - 1].IsFiring = isFiring;
                 }
@@ -410,7 +410,7 @@ namespace AimbotDetector.DemoParser
             if (Players.Count > 0)
             {
                 var player = Players[0]; // Assume first player is the demo recorder
-                if (player.AimData.Count > 0)
+                if (player.AimData != null && player.AimData.Count > 0)
                 {
                     player.AimData[player.AimData.Count - 1].WeaponId = weaponId;
                 }
@@ -435,6 +435,12 @@ namespace AimbotDetector.DemoParser
             else
             {
                 player = Players[0];
+            }
+
+            // Ensure AimData is initialized
+            if (player.AimData == null)
+            {
+                player.AimData = new List<AimData>();
             }
 
             // Find nearest visible enemies at this timestamp
