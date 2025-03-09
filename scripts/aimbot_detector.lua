@@ -289,14 +289,46 @@ local function getAngleDifference(a1, a2)
     return diff
 end
 
--- Ensure log directory exists
+-- Ensure log directory exists (cross-platform compatible)
 local function ensureLogDirExists()
-    if config.LOG_DIR and config.LOG_DIR ~= "" then
-        -- Try to create the directory if it doesn't exist
-        os.execute("mkdir -p " .. config.LOG_DIR)
-        return config.LOG_DIR .. "/"
+    if not config.LOG_DIR or config.LOG_DIR == "" then
+        return ""
     end
-    return ""
+    
+    -- Check if directory exists first
+    local dirExists = false
+    local testFile = io.open(config.LOG_DIR .. "/test.tmp", "w")
+    if testFile then
+        testFile:close()
+        os.remove(config.LOG_DIR .. "/test.tmp")
+        dirExists = true
+    end
+    
+    -- Create directory if it doesn't exist
+    if not dirExists then
+        -- Try platform-specific directory creation
+        local success
+        if package.config:sub(1,1) == '\\' then
+            -- Windows
+            success = os.execute('if not exist "' .. config.LOG_DIR .. '" mkdir "' .. config.LOG_DIR .. '"')
+        else
+            -- Unix/Linux/macOS
+            success = os.execute("mkdir -p " .. config.LOG_DIR)
+        end
+        
+        if not success then
+            et.G_Print("Warning: Failed to create log directory: " .. config.LOG_DIR .. "\n")
+            return ""
+        end
+    end
+    
+    -- Add trailing slash/backslash based on platform
+    local separator = package.config:sub(1,1)
+    if config.LOG_DIR:sub(-1) ~= separator then
+        return config.LOG_DIR .. separator
+    else
+        return config.LOG_DIR
+    end
 end
 
 -- Log function
