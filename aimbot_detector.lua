@@ -1190,14 +1190,15 @@ function et_Damage(target, attacker, damage, dflags, mod)
     end
     
     -- Record target switch if different from last target
-    if player.lastTarget ~= target then
+    local lastTarget_num = tonumber(player.lastTarget) or -1
+    if lastTarget_num ~= target then
         local targetSwitch = {
-            from = player.lastTarget,
+            from = lastTarget_num,
             to = target,
             time = currentTime
         }
         
-        if player.lastTarget ~= -1 then
+        if lastTarget_num ~= -1 then
             table.insert(player.targetSwitches, targetSwitch)
             
             -- Keep only the last 20 target switches
