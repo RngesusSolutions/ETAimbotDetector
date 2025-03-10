@@ -665,7 +665,8 @@ local function warnPlayer(clientNum, reason)
             player.name, reason)
         
         -- Send to all admins (clients with admin flag)
-        for i = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
+        local maxClients = tonumber(et.trap_Cvar_Get("sv_maxclients")) or 64 -- Convert to number with fallback
+        for i = 0, maxClients - 1 do
             if et.gentity_get(i, "inuse") and et.G_shrubbot_permission(i, "a") then
                 et.trap_SendServerCommand(i, "chat \"" .. adminMessage .. "\"")
             end
@@ -1159,12 +1160,13 @@ function et_Damage(target, attacker, damage, dflags, mod)
     target, attacker, damage, dflags, mod = convertParams(target, attacker, damage, dflags, mod)
     
     -- Skip if attacker is invalid or not a player
-    if attacker < 0 or attacker >= et.trap_Cvar_Get("sv_maxclients") then
+    local maxClients = tonumber(et.trap_Cvar_Get("sv_maxclients")) or 64 -- Convert to number with fallback
+    if attacker < 0 or attacker >= maxClients then
         return
     end
     
     -- Skip if target is invalid or not a player
-    if target < 0 or target >= et.trap_Cvar_Get("sv_maxclients") then
+    if target < 0 or target >= maxClients then
         return
     end
     
@@ -1249,12 +1251,13 @@ function et_Obituary(victim, killer, mod)
     victim, killer, mod = convertParams(victim, killer, mod)
     
     -- Skip if killer is invalid or not a player
-    if killer < 0 or killer >= et.trap_Cvar_Get("sv_maxclients") then
+    local maxClients = tonumber(et.trap_Cvar_Get("sv_maxclients")) or 64 -- Convert to number with fallback
+    if killer < 0 or killer >= maxClients then
         return
     end
     
     -- Skip if victim is invalid or not a player
-    if victim < 0 or victim >= et.trap_Cvar_Get("sv_maxclients") then
+    if victim < 0 or victim >= maxClients then
         return
     end
     
@@ -1339,7 +1342,8 @@ function et_RunFrame(levelTime)
     end
     
     -- Process each player
-    for clientNum = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
+    local maxClients = tonumber(et.trap_Cvar_Get("sv_maxclients")) or 64 -- Convert to number with fallback
+    for clientNum = 0, maxClients - 1 do
         if et.gentity_get(clientNum, "inuse") then
             -- Initialize player data if needed
             if not players[clientNum] then
