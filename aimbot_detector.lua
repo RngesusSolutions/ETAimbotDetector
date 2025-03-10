@@ -409,13 +409,25 @@ local function initPlayerData(clientNum)
     local guid = et.Info_ValueForKey(userinfo, "cl_guid")
     local ip = et.Info_ValueForKey(userinfo, "ip")
     
+    -- Get current view angles if available
+    local ps = et.gentity_get(clientNum, "ps.viewangles")
+    local initialAngle = {pitch = 0, yaw = 0}
+    
+    -- Use actual angles if available
+    if ps then
+        initialAngle = {
+            pitch = ps[0],
+            yaw = ps[1]
+        }
+    end
+    
     players[clientNum] = {
         name = name,
         guid = guid,
         ip = ip,
         
         -- Tracking variables
-        lastAngle = {pitch = 0, yaw = 0},
+        lastAngle = initialAngle, -- Ensure lastAngle is properly initialized
         angleChanges = {},
         angleChangePatterns = {},
         shots = 0,
@@ -479,6 +491,13 @@ local function updatePlayerAngles(clientNum)
         pitch = ps[0],
         yaw = ps[1]
     }
+    
+    -- Initialize lastAngle if it doesn't exist or has nil values
+    if not player.lastAngle or not player.lastAngle.pitch or not player.lastAngle.yaw then
+        player.lastAngle = {pitch = 0, yaw = 0}
+        player.lastAngle = currentAngle
+        return -- Skip angle change calculation on first update
+    end
     
     -- Calculate angle change
     local angleChange = {
