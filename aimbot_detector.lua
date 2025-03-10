@@ -1091,6 +1091,11 @@ end
 
 -- ET:Legacy callback: ClientConnect
 function et_ClientConnect(clientNum, firstTime, isBot)
+    -- Convert parameters to numbers to prevent string comparison errors
+    clientNum = tonumber(clientNum) or 0
+    firstTime = tonumber(firstTime) or 0
+    isBot = tonumber(isBot) or 0
+    
     -- Initialize player data when a client connects
     initPlayerData(clientNum)
     
@@ -1099,6 +1104,9 @@ end
 
 -- ET:Legacy callback: ClientDisconnect
 function et_ClientDisconnect(clientNum)
+    -- Convert parameters to numbers to prevent string comparison errors
+    clientNum = tonumber(clientNum) or 0
+    
     -- Log player stats before they disconnect
     if players[clientNum] then
         logPlayerStats(players[clientNum])
@@ -1108,6 +1116,9 @@ end
 
 -- ET:Legacy callback: ClientUserinfoChanged
 function et_ClientUserinfoChanged(clientNum)
+    -- Convert parameters to numbers to prevent string comparison errors
+    clientNum = tonumber(clientNum) or 0
+    
     -- Update player info if they change their name or other userinfo
     if players[clientNum] then
         local userinfo = et.trap_GetUserinfo(clientNum)
@@ -1202,6 +1213,11 @@ end
 
 -- ET:Legacy callback: Obituary
 function et_Obituary(victim, killer, mod)
+    -- Convert parameters to numbers to prevent string comparison errors
+    victim = tonumber(victim) or 0
+    killer = tonumber(killer) or 0
+    mod = tonumber(mod) or 0
+    
     -- Skip if killer is invalid or not a player
     if killer < 0 or killer >= et.trap_Cvar_Get("sv_maxclients") then
         return
@@ -1237,6 +1253,10 @@ end
 
 -- ET:Legacy callback: FireWeapon
 function et_FireWeapon(clientNum, weapon)
+    -- Convert parameters to numbers to prevent string comparison errors
+    clientNum = tonumber(clientNum) or 0
+    weapon = tonumber(weapon) or 0
+    
     -- Initialize player data if needed
     if not players[clientNum] then
         initPlayerData(clientNum)
@@ -1271,6 +1291,9 @@ end
 
 -- ET:Legacy callback: RunFrame
 function et_RunFrame(levelTime)
+    -- Convert parameters to numbers to prevent string comparison errors
+    levelTime = tonumber(levelTime) or 0
+    
     -- Ensure players table exists
     if not players then
         players = {}
