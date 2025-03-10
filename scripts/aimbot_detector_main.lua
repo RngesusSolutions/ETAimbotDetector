@@ -2,6 +2,19 @@
 -- A Lua script for ET:Legacy servers that detects and bans players using aimbots.
 -- Enhanced version with improved detection algorithms and configurable thresholds.
 
+-- Module loading system
+local luamodspath = "scripts"
+
+-- Path accessor function
+function wolfa_getLuaModsPath()
+    return luamodspath
+end
+
+-- Module loading function
+function wolfa_requireModule(module)
+    return require(wolfa_getLuaModsPath().."/"..string.gsub(module, "%.", "/"))
+end
+
 -- Load all script modules
 local microMovementDetection = wolfa_requireModule("aimbot.micro_movement")
 local flickAnalysis = wolfa_requireModule("aimbot.flick_analysis")
