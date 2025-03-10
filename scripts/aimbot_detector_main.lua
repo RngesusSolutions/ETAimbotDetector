@@ -3,74 +3,89 @@
 -- Enhanced version with improved detection algorithms and configurable thresholds.
 
 -- Module loading system
-local basepath = et.trap_Cvar_Get("fs_basepath").."/"..et.trap_Cvar_Get("fs_game").."/"
-local homepath = et.trap_Cvar_Get("fs_homepath").."/"..et.trap_Cvar_Get("fs_game").."/"
-local luamodspath = "luascripts/wolfadmin"
+-- Define the base path for our modules relative to where this script is loaded
+local scriptPath = "luascripts/wolfadmin/"
 
--- Path accessor function
-function wolfa_getBasePath()
-    return basepath
-end
-
-function wolfa_getHomePath()
-    return homepath
-end
-
-function wolfa_getLuaModsPath()
-    return luamodspath
-end
-
--- Module loading function
-function wolfa_requireModule(module)
-    -- First try to load from the current directory
-    local success, result = pcall(require, module)
+-- Function to load a module using dofile with proper path resolution
+function loadModule(moduleName)
+    -- Convert dot notation to path notation and append .lua extension
+    local modulePath = string.gsub(moduleName, "%.", "/")
+    
+    -- Try to load the module from the scripts directory first (most common case)
+    local success, result = pcall(function() 
+        return dofile("scripts/" .. modulePath .. ".lua") 
+    end)
     if success then
+        et.G_Print("^2ETAimbotDetector^7: Successfully loaded module from scripts/" .. modulePath .. ".lua\n")
         return result
     end
     
-    -- Then try with the full path
-    success, result = pcall(require, string.gsub(module, "%.", "/"))
+    -- If that fails, try to load from the same directory as this script
+    success, result = pcall(function() 
+        return dofile(scriptPath .. modulePath .. ".lua") 
+    end)
     if success then
+        et.G_Print("^2ETAimbotDetector^7: Successfully loaded module from " .. scriptPath .. modulePath .. ".lua\n")
         return result
     end
     
-    -- Finally try with the luamodspath
-    return dofile(wolfa_getLuaModsPath().."/"..string.gsub(module, "%.", "/")..".lua")
+    -- If that fails, try to load from the etmain directory
+    success, result = pcall(function() 
+        return dofile("etmain/scripts/" .. modulePath .. ".lua") 
+    end)
+    if success then
+        et.G_Print("^2ETAimbotDetector^7: Successfully loaded module from etmain/scripts/" .. modulePath .. ".lua\n")
+        return result
+    end
+    
+    -- If all attempts fail, log the error and return an empty table to prevent crashes
+    et.G_Print("^1ETAimbotDetector^7: ERROR - Failed to load module: " .. moduleName .. "\n")
+    return {}
 end
 
 -- Load all script modules
-local microMovementDetection = dofile("scripts/aimbot/micro_movement.lua")
-local flickAnalysis = dofile("scripts/aimbot/flick_analysis.lua")
-local timeSeriesAnalysis = dofile("scripts/aimbot/time_series.lua")
-local weaponThresholds = dofile("scripts/aimbot/weapon_thresholds.lua")
-local skillAdaptation = dofile("scripts/aimbot/skill_adaptation.lua")
-local warningSystem = dofile("scripts/aimbot/warning_system.lua")
-local logging = dofile("scripts/aimbot/logging.lua")
+local microMovementDetection = loadModule("aimbot.micro_movement")
+local flickAnalysis = loadModule("aimbot.flick_analysis")
+local timeSeriesAnalysis = loadModule("aimbot.time_series")
+local weaponThresholds = loadModule("aimbot.weapon_thresholds")
+local skillAdaptation = loadModule("aimbot.skill_adaptation")
+local warningSystem = loadModule("aimbot.warning_system")
+local logging = loadModule("aimbot.logging")
 
 -- Load base configuration
-dofile("scripts/aimbot/config.lua")
+loadModule("aimbot.config")
 
 -- Initialize global functions
 debugLog = logging.debugLog
 log = logging.log
 
 -- Load common functions
-local common = dofile("scripts/aimbot/common.lua")
+local common = loadModule("aimbot.common")
 
 -- Initialize global functions
 initPlayerData = common.initPlayerData
 updatePlayerAngles = common.updatePlayerAngles
 
--- Initialize the script
+-- Initialize the script with error handling
 function et_InitGame(levelTime, randomSeed, restart)
+    -- Register the module
+    et.RegisterModname("ETAimbotDetector v1.0")
     et.G_Print("^3ETAimbotDetector^7 v1.0 loaded\n")
     et.G_Print("^3ETAimbotDetector^7: Monitoring for suspicious aim patterns\n")
     
-    -- Create log directory
-    logging.ensureLogDirExists()
+    -- Create log directory with error handling
+    if logging and logging.ensureLogDirExists then
+        pcall(logging.ensureLogDirExists)
+    else
+        et.G_Print("^1ETAimbotDetector^7: Warning - Logging module not loaded correctly\n")
+    end
     
-    -- Log initialization
-    logging.logStartup()
+    -- Log initialization with error handling
+    if logging and logging.logStartup then
+        pcall(logging.logStartup)
+    else
+        et.G_Print("^1ETAimbotDetector^7: Warning - Logging module not loaded correctly\n")
+    end
 end
 
 -- Script information
