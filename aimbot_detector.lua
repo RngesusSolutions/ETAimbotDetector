@@ -472,10 +472,18 @@ local function initPlayerData(clientNum)
         rank = 0,
         
         -- Stats logging
-        lastStatsLogTime = 0
+        lastStatsLogTime = 0,
+        
+        -- OMNIBOT tracking
+        lastOmnibotLogTime = 0
     }
     
-    debugLog("Player initialized: " .. name .. " (GUID: " .. guid .. ")", 1)
+    -- Log if this is an OMNIBOT
+    if config.IGNORE_OMNIBOTS and isOmniBot(guid) then
+        debugLog("Initialized OMNIBOT player: " .. name .. " (GUID: " .. guid .. ")", 1)
+    else
+        debugLog("Player initialized: " .. name .. " (GUID: " .. guid .. ")", 1)
+    end
 end
 
 -- Update player angles
@@ -1269,6 +1277,17 @@ function et_RunFrame(levelTime)
                 goto continue
             end
             
+            -- Skip all detection logic for OMNIBOT players
+            if config.IGNORE_OMNIBOTS and isOmniBot(player.guid) then
+                -- Only log this occasionally to avoid spamming the console
+                local currentTime = et.trap_Milliseconds()
+                if not player.lastOmnibotLogTime or currentTime - player.lastOmnibotLogTime >= 60000 then -- Log once per minute
+                    debugLog("Skipping all detection for OMNIBOT player: " .. player.name, 1)
+                    player.lastOmnibotLogTime = currentTime
+                end
+                goto continue
+            end
+            
             -- Update player angles
             updatePlayerAngles(clientNum)
             
@@ -1291,12 +1310,26 @@ function et_RunFrame(levelTime)
     if config.SKILL_ADAPTATION and currentTime - lastXPUpdateTime >= config.SKILL_XP_UPDATE_INTERVAL then
         for clientNum, player in pairs(players) do
             if et.gentity_get(clientNum, "inuse") then
-                -- Get player XP from ET:Legacy
-                local stats = et.gentity_get(clientNum, "sess.stats")
-                if stats then
-                    player.xp = stats[0] -- XP is stored in the first stat
-                    player.rank = et.gentity_get(clientNum, "sess.rank") or 0
+                -- Try to get player XP from ET:Legacy using alternative methods
+                -- Since "sess.stats" is not a valid field, we'll use a safer approach
+                local xp = 0
+                local rank = 0
+                
+                -- Try to get rank directly
+                pcall(function()
+                    rank = et.gentity_get(clientNum, "sess.rank") or 0
+                end)
+                
+                -- Set default XP based on rank if available
+                if rank > 0 then
+                    xp = rank * 1000 -- Estimate XP based on rank
                 end
+                
+                -- Update player data
+                player.xp = xp
+                player.rank = rank
+                
+                debugLog("Updated player " .. player.name .. " skill data: rank=" .. rank .. ", xp=" .. xp, 2)
             end
         end
         
