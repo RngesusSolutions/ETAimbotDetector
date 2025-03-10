@@ -1,10 +1,6 @@
--- ETAimbotDetector
--- A Lua script for ET:Legacy servers that detects and bans players using aimbots.
--- Enhanced version with improved detection algorithms and configurable thresholds.
-
--- ETAimbotDetector - Enhanced with micro-movement detection
--- A Lua script for ET:Legacy servers that detects and bans players using aimbots.
--- This version includes advanced micro-movement detection for humanized aimbots
+-- ETAimbotDetector - Configuration Module
+-- Configuration settings for the aimbot detection system
+-- This module contains all configurable parameters and thresholds
 
 -- Configuration variables
 -- Weapon-specific thresholds
@@ -161,99 +157,14 @@ local config = {
     }
 }
 
--- Player data storage
-local players = {}
+-- Initialize global variables
+players = {}
+weaponThresholds = weaponThresholds
+config = config
 
--- Check if player is an OMNIBOT
-local function isOmniBot(guid)
-    if not guid then return false end
-    return string.find(string.lower(guid), "omnibot") ~= nil
-end
-
--- Get player skill level based on XP
-local function getPlayerSkillLevel(player)
-    if not config.SKILL_ADAPTATION then return "REGULAR" end
-    
-    local xp = player.xp or 0
-    
-    if xp >= config.SKILL_LEVELS.EXPERT then
-        return "EXPERT"
-    elseif xp >= config.SKILL_LEVELS.SKILLED then
-        return "SKILLED"
-    elseif xp >= config.SKILL_LEVELS.REGULAR then
-        return "REGULAR"
-    else
-        return "NOVICE"
-    end
-end
-
--- Get adjusted threshold based on player skill level
-local function getAdjustedThreshold(player, baseThreshold, thresholdType)
-    if not config.SKILL_ADAPTATION then return baseThreshold end
-    
-    local skillLevel = getPlayerSkillLevel(player)
-    local adjustment = config.SKILL_ADJUSTMENTS[skillLevel][thresholdType] or 0
-    
-    return baseThreshold + adjustment
-end
-
--- Initialize player data
-local function initPlayerData(clientNum)
-    local userinfo = et.trap_GetUserinfo(clientNum)
-    local name = et.Info_ValueForKey(userinfo, "name")
-    local guid = et.Info_ValueForKey(userinfo, "cl_guid")
-    local ip = et.Info_ValueForKey(userinfo, "ip")
-    
-    players[clientNum] = {
-        name = name,
-        guid = guid,
-        ip = ip,
-        
-        -- Tracking variables
-        lastAngle = {pitch = 0, yaw = 0},
-        angleChanges = {},
-        angleChangePatterns = {},
-        shots = 0,
-        hits = 0,
-        headshots = 0,
-        kills = 0,
-        consecutiveHits = 0,
-        
-        -- Weapon-specific stats
-        weaponStats = {},
-        lastWeapon = "default",
-        
-        -- Time-based tracking
-        lastDetectionTime = 0,
-        lastShotTime = 0,
-        reactionTimes = {},
-        shotTimings = {},
-        hitTimings = {},
-        
-        -- Target tracking
-        lastTarget = -1,
-        lastTargetTime = 0,
-        targetSwitches = {},
-        
-        -- Statistical data
-        avgAngleChange = 0,
-        stdDevAngleChange = 0,
-        
-        -- Warning system
-        warnings = 0,
-        lastWarningTime = 0,
-        
-        -- Ban history
-        tempBans = 0,
-        
-        -- Detection confidence
-        aimbotConfidence = 0,
-        humanizedAimbotConfidence = 0,
-        
-        -- Skill tracking
-        xp = 0,
-        rank = 0
-    }
-    
-    debugLog("Player initialized: " .. name .. " (GUID: " .. guid .. ")")
-end
+-- Export configuration
+return {
+    players = players,
+    weaponThresholds = weaponThresholds,
+    config = config
+}
