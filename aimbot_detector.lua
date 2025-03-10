@@ -13,7 +13,7 @@ local config = {
     MAX_ANGLE_CHANGE = 180,             -- Maximum angle change to consider (degrees)
     
     -- Accuracy detection
-    ACCURACY_THRESHOLD = 0.8,           -- Base accuracy threshold
+    ACCURACY_THRESHOLD = 0.65,           -- Base accuracy threshold (lowered to detect high but not exceptional accuracy)
     HEADSHOT_RATIO_THRESHOLD = 0.7,     -- Base headshot ratio threshold
     
     -- Consecutive hits detection
@@ -105,7 +105,7 @@ local config = {
 local weaponThresholds = {
     -- Default thresholds
     default = {
-        accuracy = 0.75,              -- Base accuracy threshold
+        accuracy = 0.65,              -- Base accuracy threshold (lowered to detect high but not exceptional accuracy)
         headshot = 0.65,              -- Base headshot ratio threshold
         angleChange = 160             -- Base angle change threshold
     },
@@ -127,7 +127,7 @@ local weaponThresholds = {
     },
     -- Automatic weapons (medium accuracy expected)
     weapon_MP40 = {
-        accuracy = 0.7,
+        accuracy = 0.65,
         headshot = 0.6,
         angleChange = 160
     },
@@ -1070,8 +1070,10 @@ local function runDetection(clientNum)
     -- Store confidence score
     player.aimbotConfidence = confidence
     
-    -- Check if confidence exceeds threshold
-    if confidence >= config.CONFIDENCE_THRESHOLD and detectionCount >= 2 then
+    -- Trigger detection if we have multiple methods or a single method with high confidence
+    -- Lower threshold for single method detection to catch players like RNGesus
+    if (confidence >= config.CONFIDENCE_THRESHOLD and detectionCount >= 2) or 
+       (confidence >= 0.08 and detectionCount >= 1) then
         debugLog("runDetection: Aimbot detected for " .. player.name .. " - confidence: " .. confidence .. ", detections: " .. detectionCount .. ", type: " .. aimbotType, 1)
         
         -- Log detection
@@ -1190,8 +1192,10 @@ function et_Damage(target, attacker, damage, dflags, mod)
     
     -- Check if this was a headshot (bitwise operation on already converted dflags)
     local isHeadshot = (dflags & 32) ~= 0
+    debugLog("Headshot check for " .. player.name .. ": dflags=" .. dflags .. ", isHeadshot=" .. tostring(isHeadshot), 2)
     if isHeadshot then
         player.headshots = player.headshots + 1
+        debugLog("Headshot recorded for " .. player.name .. ": total headshots=" .. player.headshots, 2)
     end
     
     -- Get current weapon
