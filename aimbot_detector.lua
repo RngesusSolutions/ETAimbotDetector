@@ -1285,10 +1285,10 @@ function et_Obituary(victim, killer, mod)
     updateWeaponStats(player, weaponName, false, false, true)
 end
 
--- ET:Legacy callback: FireWeapon
-function et_FireWeapon(clientNum, weapon)
+-- ET:Legacy callback: WeaponFire
+function et_WeaponFire(clientNum, weapon)
     -- Debug log parameter types before conversion
-    debugLog("et_FireWeapon parameters before conversion: clientNum=" .. type(clientNum) .. ":" .. tostring(clientNum) .. 
+    debugLog("et_WeaponFire parameters before conversion: clientNum=" .. type(clientNum) .. ":" .. tostring(clientNum) .. 
              ", weapon=" .. type(weapon) .. ":" .. tostring(weapon), 3)
     
     -- Convert all parameters to numbers using helper function
