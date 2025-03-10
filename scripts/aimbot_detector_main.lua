@@ -3,36 +3,59 @@
 -- Enhanced version with improved detection algorithms and configurable thresholds.
 
 -- Module loading system
-local luamodspath = "scripts"
+local basepath = et.trap_Cvar_Get("fs_basepath").."/"..et.trap_Cvar_Get("fs_game").."/"
+local homepath = et.trap_Cvar_Get("fs_homepath").."/"..et.trap_Cvar_Get("fs_game").."/"
+local luamodspath = "luascripts/wolfadmin"
 
 -- Path accessor function
+function wolfa_getBasePath()
+    return basepath
+end
+
+function wolfa_getHomePath()
+    return homepath
+end
+
 function wolfa_getLuaModsPath()
     return luamodspath
 end
 
 -- Module loading function
 function wolfa_requireModule(module)
-    return require(wolfa_getLuaModsPath().."/"..string.gsub(module, "%.", "/"))
+    -- First try to load from the current directory
+    local success, result = pcall(require, module)
+    if success then
+        return result
+    end
+    
+    -- Then try with the full path
+    success, result = pcall(require, string.gsub(module, "%.", "/"))
+    if success then
+        return result
+    end
+    
+    -- Finally try with the luamodspath
+    return dofile(wolfa_getLuaModsPath().."/"..string.gsub(module, "%.", "/")..".lua")
 end
 
 -- Load all script modules
-local microMovementDetection = wolfa_requireModule("aimbot.micro_movement")
-local flickAnalysis = wolfa_requireModule("aimbot.flick_analysis")
-local timeSeriesAnalysis = wolfa_requireModule("aimbot.time_series")
-local weaponThresholds = wolfa_requireModule("aimbot.weapon_thresholds")
-local skillAdaptation = wolfa_requireModule("aimbot.skill_adaptation")
-local warningSystem = wolfa_requireModule("aimbot.warning_system")
-local logging = wolfa_requireModule("aimbot.logging")
+local microMovementDetection = dofile("scripts/aimbot/micro_movement.lua")
+local flickAnalysis = dofile("scripts/aimbot/flick_analysis.lua")
+local timeSeriesAnalysis = dofile("scripts/aimbot/time_series.lua")
+local weaponThresholds = dofile("scripts/aimbot/weapon_thresholds.lua")
+local skillAdaptation = dofile("scripts/aimbot/skill_adaptation.lua")
+local warningSystem = dofile("scripts/aimbot/warning_system.lua")
+local logging = dofile("scripts/aimbot/logging.lua")
 
 -- Load base configuration
-wolfa_requireModule("aimbot.config")
+dofile("scripts/aimbot/config.lua")
 
 -- Initialize global functions
 debugLog = logging.debugLog
 log = logging.log
 
 -- Load common functions
-local common = wolfa_requireModule("aimbot.common")
+local common = dofile("scripts/aimbot/common.lua")
 
 -- Initialize global functions
 initPlayerData = common.initPlayerData
