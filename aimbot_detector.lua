@@ -1246,7 +1246,8 @@ function et_Obituary(victim, killer, mod)
     
     -- Get current weapon
     local weapon = et.gentity_get(killer, "s.weapon")
-    local weaponName = "weapon_" .. weapon
+    local weapon_num = tonumber(weapon) or 0  -- Convert to number with fallback
+    local weaponName = "weapon_" .. weapon_num
     
     -- Update weapon-specific stats
     updateWeaponStats(player, weaponName, false, false, true)
