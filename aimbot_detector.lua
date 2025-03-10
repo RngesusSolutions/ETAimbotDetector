@@ -330,6 +330,15 @@ local function logStartup()
     end
 end
 
+-- Helper function to convert callback parameters to numbers
+local function convertParams(...)
+    local result = {}
+    for i, param in ipairs({...}) do
+        result[i] = tonumber(param) or 0
+    end
+    return table.unpack(result)
+end
+
 -- Calculate standard deviation
 local function calculateStdDev(values, mean)
     if #values < 2 then return 0 end
@@ -1091,10 +1100,13 @@ end
 
 -- ET:Legacy callback: ClientConnect
 function et_ClientConnect(clientNum, firstTime, isBot)
-    -- Convert parameters to numbers to prevent string comparison errors
-    clientNum = tonumber(clientNum) or 0
-    firstTime = tonumber(firstTime) or 0
-    isBot = tonumber(isBot) or 0
+    -- Debug log parameter types before conversion
+    debugLog("et_ClientConnect parameters before conversion: clientNum=" .. type(clientNum) .. ":" .. tostring(clientNum) .. 
+             ", firstTime=" .. type(firstTime) .. ":" .. tostring(firstTime) .. 
+             ", isBot=" .. type(isBot) .. ":" .. tostring(isBot), 3)
+    
+    -- Convert all parameters to numbers using helper function
+    clientNum, firstTime, isBot = convertParams(clientNum, firstTime, isBot)
     
     -- Initialize player data when a client connects
     initPlayerData(clientNum)
@@ -1104,8 +1116,11 @@ end
 
 -- ET:Legacy callback: ClientDisconnect
 function et_ClientDisconnect(clientNum)
-    -- Convert parameters to numbers to prevent string comparison errors
-    clientNum = tonumber(clientNum) or 0
+    -- Debug log parameter types before conversion
+    debugLog("et_ClientDisconnect parameters before conversion: clientNum=" .. type(clientNum) .. ":" .. tostring(clientNum), 3)
+    
+    -- Convert parameters to numbers using helper function
+    clientNum = convertParams(clientNum)
     
     -- Log player stats before they disconnect
     if players[clientNum] then
@@ -1116,8 +1131,11 @@ end
 
 -- ET:Legacy callback: ClientUserinfoChanged
 function et_ClientUserinfoChanged(clientNum)
-    -- Convert parameters to numbers to prevent string comparison errors
-    clientNum = tonumber(clientNum) or 0
+    -- Debug log parameter types before conversion
+    debugLog("et_ClientUserinfoChanged parameters before conversion: clientNum=" .. type(clientNum) .. ":" .. tostring(clientNum), 3)
+    
+    -- Convert parameters to numbers using helper function
+    clientNum = convertParams(clientNum)
     
     -- Update player info if they change their name or other userinfo
     if players[clientNum] then
@@ -1132,10 +1150,13 @@ end
 
 -- ET:Legacy callback: Damage
 function et_Damage(target, attacker, damage, dflags, mod)
-    -- Convert parameters to numbers to prevent string comparison errors
-    attacker = tonumber(attacker) or 0
-    target = tonumber(target) or 0
-    damage = tonumber(damage) or 0
+    -- Debug log parameter types before conversion
+    debugLog("et_Damage parameters before conversion: target=" .. type(target) .. ":" .. tostring(target) .. 
+             ", attacker=" .. type(attacker) .. ":" .. tostring(attacker) .. 
+             ", dflags=" .. type(dflags) .. ":" .. tostring(dflags), 3)
+    
+    -- Convert all parameters to numbers using helper function
+    target, attacker, damage, dflags, mod = convertParams(target, attacker, damage, dflags, mod)
     
     -- Skip if attacker is invalid or not a player
     if attacker < 0 or attacker >= et.trap_Cvar_Get("sv_maxclients") then
@@ -1165,17 +1186,20 @@ function et_Damage(target, attacker, damage, dflags, mod)
     -- Update consecutive hits
     player.consecutiveHits = player.consecutiveHits + 1
     
-    -- Check if this was a headshot (convert dflags to number for bitwise operation)
-    local dflags_num = tonumber(dflags) or 0
-    local isHeadshot = (dflags_num & 32) ~= 0
+    -- Check if this was a headshot (bitwise operation on already converted dflags)
+    local isHeadshot = (dflags & 32) ~= 0
     if isHeadshot then
         player.headshots = player.headshots + 1
     end
     
     -- Get current weapon
     local weapon = et.gentity_get(attacker, "s.weapon")
-    local weaponName = "weapon_" .. weapon
+    local weapon_num = tonumber(weapon) or 0  -- Convert to number with fallback
+    local weaponName = "weapon_" .. weapon_num
     player.lastWeapon = weaponName
+    
+    -- Debug log weapon information
+    debugLog("et_Damage weapon info: raw=" .. tostring(weapon) .. ", converted=" .. weapon_num, 3)
     
     -- Update weapon-specific stats
     updateWeaponStats(player, weaponName, true, isHeadshot, false)
@@ -1190,7 +1214,9 @@ function et_Damage(target, attacker, damage, dflags, mod)
     end
     
     -- Record target switch if different from last target
+    -- Ensure lastTarget is a number for comparison
     local lastTarget_num = tonumber(player.lastTarget) or -1
+    
     if lastTarget_num ~= target then
         local targetSwitch = {
             from = lastTarget_num,
@@ -1214,10 +1240,13 @@ end
 
 -- ET:Legacy callback: Obituary
 function et_Obituary(victim, killer, mod)
-    -- Convert parameters to numbers to prevent string comparison errors
-    victim = tonumber(victim) or 0
-    killer = tonumber(killer) or 0
-    mod = tonumber(mod) or 0
+    -- Debug log parameter types before conversion
+    debugLog("et_Obituary parameters before conversion: victim=" .. type(victim) .. ":" .. tostring(victim) .. 
+             ", killer=" .. type(killer) .. ":" .. tostring(killer) .. 
+             ", mod=" .. type(mod) .. ":" .. tostring(mod), 3)
+    
+    -- Convert all parameters to numbers using helper function
+    victim, killer, mod = convertParams(victim, killer, mod)
     
     -- Skip if killer is invalid or not a player
     if killer < 0 or killer >= et.trap_Cvar_Get("sv_maxclients") then
@@ -1255,9 +1284,12 @@ end
 
 -- ET:Legacy callback: FireWeapon
 function et_FireWeapon(clientNum, weapon)
-    -- Convert parameters to numbers to prevent string comparison errors
-    clientNum = tonumber(clientNum) or 0
-    weapon = tonumber(weapon) or 0
+    -- Debug log parameter types before conversion
+    debugLog("et_FireWeapon parameters before conversion: clientNum=" .. type(clientNum) .. ":" .. tostring(clientNum) .. 
+             ", weapon=" .. type(weapon) .. ":" .. tostring(weapon), 3)
+    
+    -- Convert all parameters to numbers using helper function
+    clientNum, weapon = convertParams(clientNum, weapon)
     
     -- Initialize player data if needed
     if not players[clientNum] then
@@ -1294,8 +1326,11 @@ end
 
 -- ET:Legacy callback: RunFrame
 function et_RunFrame(levelTime)
-    -- Convert parameters to numbers to prevent string comparison errors
-    levelTime = tonumber(levelTime) or 0
+    -- Debug log parameter types before conversion
+    debugLog("et_RunFrame parameters before conversion: levelTime=" .. type(levelTime) .. ":" .. tostring(levelTime), 3)
+    
+    -- Convert parameters to numbers using helper function
+    levelTime = convertParams(levelTime)
     
     -- Ensure players table exists
     if not players then
