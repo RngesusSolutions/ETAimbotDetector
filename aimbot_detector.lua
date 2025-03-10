@@ -1141,8 +1141,9 @@ function et_Damage(target, attacker, damage, dflags, mod)
     -- Update consecutive hits
     player.consecutiveHits = player.consecutiveHits + 1
     
-    -- Check if this was a headshot
-    local isHeadshot = (dflags & 32) ~= 0
+    -- Check if this was a headshot (convert dflags to number for bitwise operation)
+    local dflags_num = tonumber(dflags) or 0
+    local isHeadshot = (dflags_num & 32) ~= 0
     if isHeadshot then
         player.headshots = player.headshots + 1
     end
