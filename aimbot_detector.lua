@@ -475,7 +475,10 @@ local function initPlayerData(clientNum)
         lastStatsLogTime = 0,
         
         -- OMNIBOT tracking
-        lastOmnibotLogTime = 0
+        lastOmnibotLogTime = 0,
+        
+        -- Insufficient data tracking
+        lastInsufficientDataLogTime = 0
     }
     
     -- Log if this is an OMNIBOT
@@ -1032,7 +1035,12 @@ local function runDetection(clientNum)
     
     -- Skip if we don't have enough data yet
     if player.shots < config.MIN_SAMPLES_REQUIRED then
-        debugLog("runDetection: Skipping " .. player.name .. " - insufficient data (" .. player.shots .. "/" .. config.MIN_SAMPLES_REQUIRED .. " shots)", 2)
+        -- Only log this occasionally to avoid spamming the console
+        local currentTime = et.trap_Milliseconds()
+        if not player.lastInsufficientDataLogTime or currentTime - player.lastInsufficientDataLogTime >= 60000 then -- Log once per minute
+            debugLog("runDetection: Skipping " .. player.name .. " - insufficient data (" .. player.shots .. "/" .. config.MIN_SAMPLES_REQUIRED .. " shots)", 2)
+            player.lastInsufficientDataLogTime = currentTime
+        end
         return
     end
     
