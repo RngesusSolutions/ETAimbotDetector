@@ -1121,6 +1121,11 @@ end
 
 -- ET:Legacy callback: Damage
 function et_Damage(target, attacker, damage, dflags, mod)
+    -- Convert parameters to numbers to prevent string comparison errors
+    attacker = tonumber(attacker) or 0
+    target = tonumber(target) or 0
+    damage = tonumber(damage) or 0
+    
     -- Skip if attacker is invalid or not a player
     if attacker < 0 or attacker >= et.trap_Cvar_Get("sv_maxclients") then
         return
