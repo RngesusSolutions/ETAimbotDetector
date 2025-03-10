@@ -1272,8 +1272,9 @@ function et_FireWeapon(clientNum, weapon)
     -- Reset consecutive hits on new shot
     player.consecutiveHits = 0
     
-    -- Get weapon name
-    local weaponName = "weapon_" .. weapon
+    -- Get weapon name (convert weapon to number to prevent string comparison errors)
+    local weapon_num = tonumber(weapon) or 0  -- Convert to number with fallback
+    local weaponName = "weapon_" .. weapon_num
     player.lastWeapon = weaponName
     
     -- Update weapon-specific stats
