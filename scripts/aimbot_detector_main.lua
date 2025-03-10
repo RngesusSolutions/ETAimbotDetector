@@ -53,18 +53,47 @@ local warningSystem = loadModule("aimbot.warning_system")
 local logging = loadModule("aimbot.logging")
 
 -- Load base configuration
-loadModule("aimbot.config")
+local config_module = loadModule("aimbot.config")
+
+-- Initialize global variables
+players = players or {}
+config = config or {}
+weaponThresholds = weaponThresholds or {}
 
 -- Initialize global functions
-debugLog = logging.debugLog
-log = logging.log
+if logging then
+    debugLog = logging.debugLog
+    log = logging.log
+else
+    -- Fallback logging functions if module failed to load
+    debugLog = function(msg, level) et.G_Print("DEBUG: " .. msg .. "\n") end
+    log = function(level, msg) et.G_Print("LOG: " .. msg .. "\n") end
+end
 
 -- Load common functions
 local common = loadModule("aimbot.common")
 
 -- Initialize global functions
-initPlayerData = common.initPlayerData
-updatePlayerAngles = common.updatePlayerAngles
+if common then
+    initPlayerData = common.initPlayerData
+    updatePlayerAngles = common.updatePlayerAngles
+else
+    -- Fallback initialization functions
+    initPlayerData = function(clientNum)
+        local userinfo = et.trap_GetUserinfo(clientNum)
+        local name = et.Info_ValueForKey(userinfo, "name")
+        players[clientNum] = {
+            name = name,
+            lastStatsLogTime = 0,
+            lastAngle = {pitch = 0, yaw = 0},
+            shots = 0,
+            hits = 0
+        }
+        et.G_Print("Initialized player: " .. name .. "\n")
+    end
+    
+    updatePlayerAngles = function(clientNum) end
+end
 
 -- Initialize the script with error handling
 function et_InitGame(levelTime, randomSeed, restart)
@@ -200,26 +229,53 @@ end
 
 -- ET:Legacy callback: RunFrame
 function et_RunFrame(levelTime)
+    -- Ensure players table exists
+    if not players then
+        players = {}
+        et.G_Print("^3ETAimbotDetector^7: Initialized players table\n")
+    end
+    
     -- Process each player
     for clientNum = 0, et.trap_Cvar_Get("sv_maxclients") - 1 do
         if et.gentity_get(clientNum, "inuse") then
             -- Initialize player data if needed
             if not players[clientNum] then
-                initPlayerData(clientNum)
+                if initPlayerData then
+                    initPlayerData(clientNum)
+                else
+                    et.G_Print("^1ETAimbotDetector^7: Error - initPlayerData function not available\n")
+                    players[clientNum] = { name = "Unknown", lastStatsLogTime = 0 }
+                end
+            end
+            
+            local player = players[clientNum]
+            if not player then
+                et.G_Print("^1ETAimbotDetector^7: Error - Failed to initialize player " .. clientNum .. "\n")
+                goto continue
             end
             
             -- Update player angles
-            updatePlayerAngles(clientNum)
+            if updatePlayerAngles then
+                updatePlayerAngles(clientNum)
+            end
             
-            -- Run detection
-            runDetection(clientNum)
+            -- Run detection if function exists
+            if runDetection then
+                runDetection(clientNum)
+            else
+                et.G_Print("^1ETAimbotDetector^7: Error - runDetection function not available\n")
+            end
             
             -- Log player stats periodically
             local currentTime = et.trap_Milliseconds()
             if player.lastStatsLogTime and currentTime - player.lastStatsLogTime >= config.LOG_STATS_INTERVAL then
-                logging.logPlayerStats(player)
+                if logging and logging.logPlayerStats then
+                    logging.logPlayerStats(player)
+                end
                 player.lastStatsLogTime = currentTime
             end
+            
+            ::continue::
         end
     end
 end
